@@ -1,0 +1,73 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e8eaf6"/>
+      <stop offset="40%" stop-color="#e3f2fd"/>
+      <stop offset="70%" stop-color="#f3e5f5"/>
+      <stop offset="100%" stop-color="#fce4ec"/>
+    </linearGradient>
+    <linearGradient id="textg" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#a78bfa"/>
+      <stop offset="50%" stop-color="#60a5fa"/>
+      <stop offset="100%" stop-color="#34d399"/>
+    </linearGradient>
+    <linearGradient id="badgeg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#a78bfa"/>
+      <stop offset="100%" stop-color="#60a5fa"/>
+    </linearGradient>
+    <radialGradient id="orb1" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgba(186,200,255,0.7)"/>
+      <stop offset="100%" stop-color="rgba(186,200,255,0)"/>
+    </radialGradient>
+    <radialGradient id="orb2" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgba(255,192,210,0.6)"/>
+      <stop offset="100%" stop-color="rgba(255,192,210,0)"/>
+    </radialGradient>
+    <radialGradient id="orb3" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgba(180,230,220,0.5)"/>
+      <stop offset="100%" stop-color="rgba(180,230,220,0)"/>
+    </radialGradient>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- 오브 -->
+  <ellipse cx="1050" cy="80" rx="320" ry="320" fill="url(#orb1)"/>
+  <ellipse cx="100" cy="550" rx="260" ry="260" fill="url(#orb2)"/>
+  <ellipse cx="600" cy="320" rx="200" ry="200" fill="url(#orb3)"/>
+
+  <!-- 유리 카드 -->
+  <rect x="60" y="60" width="720" height="510" rx="32"
+    fill="rgba(255,255,255,0.55)" stroke="rgba(255,255,255,0.85)" stroke-width="1.5"/>
+  <!-- 상단 하이라이트 -->
+  <line x1="180" y1="60" x2="540" y2="60" stroke="rgba(255,255,255,0.9)" stroke-width="1.5"/>
+
+  <!-- STUDENT PORTAL 뱃지 -->
+  <rect x="96" y="108" width="200" height="30" rx="15"
+    fill="rgba(255,255,255,0.7)" stroke="rgba(167,139,250,0.3)" stroke-width="1"/>
+  <circle cx="116" cy="123" r="5" fill="url(#badgeg)"/>
+  <text x="130" y="128" font-family="Arial, sans-serif" font-size="12" font-weight="700"
+    fill="#888" letter-spacing="2">STUDENT PORTAL</text>
+
+  <!-- 메인 타이틀 -->
+  <text x="96" y="220" font-family="Arial Black, sans-serif" font-size="72" font-weight="900" fill="#1a1a2e">SBS아카데미</text>
+  <text x="96" y="310" font-family="Arial Black, sans-serif" font-size="72" font-weight="900" fill="url(#textg)">수강생 안내사항</text>
+
+  <!-- 서브 텍스트 -->
+  <text x="96" y="370" font-family="Arial, sans-serif" font-size="22" fill="#aaa">수강생 분들은 수업 전, 꼭 확인해주세요!</text>
+
+  <!-- 구분선 -->
+  <line x1="96" y1="410" x2="560" y2="410" stroke="rgba(0,0,0,0.06)" stroke-width="1"/>
+
+  <!-- 하단 로고 -->
+  <rect x="96" y="430" width="36" height="36" rx="10" fill="url(#badgeg)"/>
+  <text x="114" y="454" text-anchor="middle" font-family="Arial Black, sans-serif"
+    font-size="18" font-weight="900" fill="white">S</text>
+  <text x="144" y="454" font-family="Arial Black, sans-serif" font-size="18"
+    font-weight="900" fill="#1a1a2e" letter-spacing="1">SBS아카데미 안산</text>
+
+  <!-- 우측 도메인 -->
+  <text x="1140" y="590" text-anchor="end" font-family="Arial, sans-serif"
+    font-size="18" fill="#bbb">sbs-ansan-notice.co.kr</text>
+</svg>
