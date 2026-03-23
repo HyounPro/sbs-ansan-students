@@ -1,4 +1,3 @@
-// ── NAV 공통 렌더링 ──
 const NAV_ITEMS = [
   { label: '홈', path: '/' },
   { label: '수업시간표', path: '/schedule/' },
@@ -11,18 +10,16 @@ const NAV_ITEMS = [
 function renderNav() {
   const nav = document.getElementById('nav');
   if (!nav) return;
-
   const currentPath = window.location.pathname;
-
   const links = NAV_ITEMS.map(item => {
     const isActive = currentPath === item.path ||
       (item.path !== '/' && currentPath.startsWith(item.path));
     return `<li><a href="${item.path}" class="${isActive ? 'active' : ''}">${item.label}</a></li>`;
   }).join('');
-
   nav.innerHTML = `
     <a href="/" class="nav-logo">
-      <span class="red">SBS</span><span class="blue">아카데미</span>&nbsp;안산
+      <div class="logo-badge">S</div>
+      SBS아카데미 안산
     </a>
     <ul class="nav-links">${links}</ul>
   `;
