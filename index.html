@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SBS아카데미 안산 — 재학생 포털</title>
+  <link rel="stylesheet" href="/assets/style.css" />
+  <style>
+    .main-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 32px 80px;
+    }
+
+    .menu-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: var(--gray-light);
+      border: 1px solid #2a2a2a;
+      border-radius: 12px;
+      padding: 32px;
+      text-decoration: none;
+      color: var(--white);
+      transition: all 0.25s;
+      min-height: 180px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .menu-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+    .menu-card.red::before { background: var(--red); }
+    .menu-card.blue::before { background: var(--blue); }
+
+    .menu-card:hover {
+      transform: translateY(-4px);
+      border-color: #444;
+    }
+    .menu-card.red:hover { box-shadow: 0 12px 40px rgba(229,57,53,0.15); }
+    .menu-card.blue:hover { box-shadow: 0 12px 40px rgba(30,136,229,0.15); }
+
+    .menu-card .icon {
+      font-size: 32px;
+      margin-bottom: 16px;
+    }
+
+    .menu-card h3 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .menu-card p {
+      font-size: 13px;
+      color: var(--gray);
+      line-height: 1.6;
+    }
+
+    .menu-card .arrow {
+      font-size: 18px;
+      margin-top: 20px;
+      opacity: 0.4;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .menu-card:hover .arrow {
+      opacity: 1;
+      transform: translateX(4px);
+    }
+    .menu-card.red .arrow { color: var(--red); }
+    .menu-card.blue .arrow { color: var(--blue); }
+
+    /* hero */
+    .hero-wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 72px 32px 24px;
+    }
+    .hero-sub {
+      font-size: 13px;
+      color: var(--gray);
+      margin-top: 12px;
+    }
+    .hero-sub strong { color: var(--white); }
+
+    @media (max-width: 768px) {
+      .main-grid { padding: 24px 16px 60px; }
+      .hero-wrap { padding: 60px 16px 16px; }
+    }
+  </style>
+</head>
+<body>
+  <nav id="nav"></nav>
+
+  <div class="page-wrap">
+    <div class="hero-wrap">
+      <div class="hero-tag">STUDENT PORTAL</div>
+      <h1 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(40px,7vw,80px);line-height:1;letter-spacing:2px;">
+        <span style="color:var(--red)">SBS</span>아카데미<br/>
+        <span style="color:var(--blue)">안산점</span> 재학생
+      </h1>
+      <p class="hero-sub">재학생을 위한 <strong>공식 정보 포털</strong>입니다.</p>
+    </div>
+
+    <div class="main-grid">
+      <a href="/schedule/" class="menu-card red">
+        <div>
+          <div class="icon">🗓</div>
+          <h3>수업시간표</h3>
+          <p>강의실별 수업 일정과 담당 강사 정보를 확인하세요.</p>
+        </div>
+        <div class="arrow">→</div>
+      </a>
+
+      <a href="/materials/" class="menu-card blue">
+        <div>
+          <div class="icon">🎒</div>
+          <h3>수업준비물</h3>
+          <p>과정별 필요한 준비물 목록을 확인하세요.</p>
+        </div>
+        <div class="arrow">→</div>
+      </a>
+
+      <a href="/learning/" class="menu-card red">
+        <div>
+          <div class="icon">📚</div>
+          <h3>학습자료</h3>
+          <p>강의 자료, 실습 파일, 참고 링크를 확인하세요.</p>
+        </div>
+        <div class="arrow">→</div>
+      </a>
+
+      <a href="/exam/" class="menu-card blue">
+        <div>
+          <div class="icon">📝</div>
+          <h3>연간시험일정</h3>
+          <p>자격증 시험 접수 및 시험 일정을 확인하세요.</p>
+        </div>
+        <div class="arrow">→</div>
+      </a>
+
+      <a href="/benefits/" class="menu-card red">
+        <div>
+          <div class="icon">🎁</div>
+          <h3>제휴혜택</h3>
+          <p>재학생 전용 제휴 할인 및 혜택을 확인하세요.</p>
+        </div>
+        <div class="arrow">→</div>
+      </a>
+    </div>
+  </div>
+
+  <script src="/assets/nav.js"></script>
+</body>
+</html>
