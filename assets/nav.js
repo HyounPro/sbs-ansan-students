@@ -1,6 +1,6 @@
 const NAV_ITEMS = [
   { label: '홈', path: '/' },
-  { label: '격일시간표', path: '/schedule/' },
+  { label: '수업시간표', path: '/schedule/' },
   { label: '수업준비물', path: '/materials/' },
   { label: '학습자료', path: '/learning/' },
   { label: '연간시험일정', path: '/exam/' },
@@ -18,8 +18,7 @@ function renderNav() {
   }).join('');
   nav.innerHTML = `
     <a href="/" class="nav-logo">
-      <div class="logo-badge">S</div>
-      SBS아카데미 안산
+      <img src="/assets/logo.png" alt="SBS아카데미 안산" style="height:36px;width:auto;object-fit:contain;" />
     </a>
     <ul class="nav-links">${links}</ul>
   `;
