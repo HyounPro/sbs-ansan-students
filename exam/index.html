@@ -14,12 +14,70 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:image" content="https://sbs-ansan-notice.co.kr/assets/og-image.png" />
   <link rel="stylesheet" href="/assets/style.css" />
+  <style>
+    .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px;}
+    .tab{
+      padding:8px 18px;border-radius:20px;cursor:pointer;
+      font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:700;
+      border:1px solid rgba(0,0,0,0.08);
+      background:rgba(255,255,255,0.6);backdrop-filter:blur(10px);
+      color:#999;transition:all 0.15s;white-space:nowrap;
+      box-shadow:0 2px 8px rgba(0,0,0,0.04);
+    }
+    .tab:hover{color:#1a1a2e;background:rgba(255,255,255,0.8);}
+    .tab.active{
+      background:rgba(255,255,255,0.95);color:#1a1a2e;font-weight:900;
+      border-color:rgba(167,139,250,0.4);
+      box-shadow:0 4px 16px rgba(139,92,246,0.15);
+    }
+    .panel{display:none;}
+    .panel.active{display:block;}
+
+    .sec-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+    .sec-header h3{font-size:15px;font-weight:700;color:#1a1a2e;white-space:nowrap;}
+    .sec-header .line{flex:1;height:1px;background:linear-gradient(to right,rgba(0,0,0,0.08),transparent);}
+    .sec-badge{font-size:10px;font-weight:700;letter-spacing:1px;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,0.8);border:1px solid rgba(0,0,0,0.06);color:#aaa;white-space:nowrap;}
+
+    .table-card{
+      background:rgba(255,255,255,0.55);
+      backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+      border:1px solid rgba(255,255,255,0.85);
+      border-radius:18px;overflow:hidden;
+      box-shadow:0 4px 24px rgba(0,0,0,0.05);
+      margin-bottom:20px;
+      overflow-x:auto;
+    }
+    table{width:100%;border-collapse:collapse;}
+    thead tr{background:rgba(255,255,255,0.5);}
+    th{padding:11px 16px;text-align:left;font-size:11px;font-weight:700;color:#aaa;letter-spacing:1px;border-bottom:1px solid rgba(0,0,0,0.05);white-space:nowrap;}
+    td{padding:12px 16px;font-size:13px;color:#333;border-bottom:1px solid rgba(0,0,0,0.04);white-space:nowrap;}
+    tr:last-child td{border-bottom:none;}
+    tr:hover td{background:rgba(255,255,255,0.4);}
+
+    .badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;}
+    .badge-purple{background:rgba(167,139,250,0.15);color:#7c3aed;border:1px solid rgba(167,139,250,0.25);}
+    .badge-blue{background:rgba(147,197,253,0.2);color:#2563eb;border:1px solid rgba(147,197,253,0.3);}
+    .badge-green{background:rgba(110,231,183,0.2);color:#059669;border:1px solid rgba(110,231,183,0.3);}
+
+    .note{font-size:12px;color:#aaa;background:rgba(255,255,255,0.5);border:1px solid rgba(255,255,255,0.8);border-radius:12px;padding:12px 16px;margin-bottom:20px;}
+
+    .list-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;}
+    .list-item{
+      background:rgba(255,255,255,0.55);backdrop-filter:blur(20px);
+      border:1px solid rgba(255,255,255,0.85);border-radius:14px;padding:14px 16px;
+      box-shadow:0 2px 12px rgba(0,0,0,0.04);
+    }
+    .list-item .month{font-size:11px;font-weight:700;color:#a78bfa;margin-bottom:4px;letter-spacing:1px;}
+    .list-item .date{font-size:16px;font-weight:700;color:#1a1a2e;}
+    .list-item .recv{font-size:11px;color:#bbb;margin-top:4px;}
+  </style>
 </head>
 <body>
   <div class="bg-orb bg-orb1"></div>
   <div class="bg-orb bg-orb2"></div>
   <div class="bg-orb bg-orb3"></div>
   <div class="bg-orb bg-orb4"></div>
+
   <div class="wrap">
     <nav id="nav"></nav>
     <div class="page-wrap">
@@ -28,14 +86,109 @@
         <h1>SBS아카데미<br/><span class="g">연간시험일정</span></h1>
         <p>수강생 분들은 수업 전, 꼭 확인해주세요!</p>
       </div>
-      <div class="section">
-        <div class="empty-state">
-          <div class="icon">📝</div>
-          <p>콘텐츠를 준비 중입니다.</p>
+
+      <div class="section" style="padding-top:0;">
+        <div class="tabs">
+          <button class="tab active" onclick="setTab(0,this)">전산세무회계</button>
+          <button class="tab" onclick="setTab(1,this)">기능사</button>
+          <button class="tab" onclick="setTab(2,this)">기사·산업기사</button>
+          <button class="tab" onclick="setTab(3,this)">GTQ·GTQi</button>
+        </div>
+
+        <!-- 전산세무회계 -->
+        <div class="panel active" id="p0">
+          <div class="note">📌 주관: 한국세무사회 | 연 6회 시행 | 전산세무·전산회계·세무회계·기업회계 동일 시험일</div>
+          <div class="sec-header"><h3>2026년 시험 일정</h3><span class="sec-badge">연 6회</span><div class="line"></div></div>
+          <div class="table-card">
+            <table>
+              <thead><tr><th>회차</th><th>시험일</th><th>접수기간</th><th>합격발표</th></tr></thead>
+              <tbody>
+                <tr><td><span class="badge badge-purple">제124회</span></td><td>01.31 (토)</td><td>01.02 ~ 01.08</td><td>02.26 (목)</td></tr>
+                <tr><td><span class="badge badge-purple">제125회</span></td><td>04.04 (토)</td><td>03.05 ~ 03.11</td><td>04.23 (목)</td></tr>
+                <tr><td><span class="badge badge-purple">제126회</span></td><td>06.06 (토)</td><td>04.30 ~ 05.06</td><td>06.25 (목)</td></tr>
+                <tr><td><span class="badge badge-purple">제127회</span></td><td>08.01 (토)</td><td>07.02 ~ 07.08</td><td>08.20 (목)</td></tr>
+                <tr><td><span class="badge badge-purple">제128회</span></td><td>10.03 (토)</td><td>08.27 ~ 09.02</td><td>10.29 (목)</td></tr>
+                <tr><td><span class="badge badge-purple">제129회</span></td><td>12.05 (토)</td><td>11.05 ~ 11.11</td><td>12.24 (목)</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="sec-header"><h3>시험 교시 안내</h3><div class="line"></div></div>
+          <div class="table-card">
+            <table>
+              <thead><tr><th>교시</th><th>시작시간</th><th>시험 종목</th></tr></thead>
+              <tbody>
+                <tr><td>1교시</td><td>오전 09:00</td><td>세무회계 / 기업회계</td></tr>
+                <tr><td>2교시</td><td>오후 12:30</td><td>전산세무 2급 / 전산회계 2급</td></tr>
+                <tr><td>3교시</td><td>오후 15:00</td><td>전산세무 1급 / 전산회계 1급</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 기능사 -->
+        <div class="panel" id="p1">
+          <div class="note">📌 주관: 한국산업인력공단 (Q-net) | 연 4회 시행</div>
+          <div class="sec-header"><h3>2026년 시험 일정</h3><span class="sec-badge">연 4회</span><div class="line"></div></div>
+          <div class="table-card">
+            <table>
+              <thead><tr><th>회차</th><th>필기 접수</th><th>필기 시험</th><th>합격발표</th><th>실기 접수</th><th>실기 시험</th><th>최종발표</th></tr></thead>
+              <tbody>
+                <tr><td><span class="badge badge-blue">1회</span></td><td>01.06~01.09</td><td>01.20~01.24</td><td>01.30</td><td>02.02~02.05</td><td>03.14~04.01</td><td>04.10 / 04.17</td></tr>
+                <tr><td><span class="badge badge-blue">2회</span></td><td>03.16~03.20</td><td>04.04~04.09</td><td>04.22</td><td>04.27~04.30</td><td>05.30~06.14</td><td>06.26 / 07.03</td></tr>
+                <tr><td><span class="badge badge-blue">3회</span></td><td>06.08~06.11</td><td>06.27~07.02</td><td>07.15</td><td>07.27~07.30</td><td>08.29~09.16</td><td>10.02 / 10.08</td></tr>
+                <tr><td><span class="badge badge-blue">4회</span></td><td>08.24~08.27</td><td>09.16~09.21</td><td>10.07</td><td>10.12~10.15</td><td>11.14~12.02</td><td>12.11 / 12.18</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 기사·산업기사 -->
+        <div class="panel" id="p2">
+          <div class="note">📌 주관: 한국산업인력공단 (Q-net) | 연 3회 시행</div>
+          <div class="sec-header"><h3>2026년 시험 일정</h3><span class="sec-badge">연 3회</span><div class="line"></div></div>
+          <div class="table-card">
+            <table>
+              <thead><tr><th>회차</th><th>필기 접수</th><th>필기 시험</th><th>합격발표</th><th>실기 접수</th><th>실기 시험</th><th>최종발표</th></tr></thead>
+              <tbody>
+                <tr><td><span class="badge badge-green">1회</span></td><td>01.12~01.15</td><td>01.30~03.03</td><td>03.11</td><td>03.23~03.26</td><td>04.18~05.06</td><td>06.05 / 06.12</td></tr>
+                <tr><td><span class="badge badge-green">2회</span></td><td>04.20~04.23</td><td>05.09~05.29</td><td>06.10</td><td>06.22~06.25</td><td>07.18~08.05</td><td>09.04 / 09.11</td></tr>
+                <tr><td><span class="badge badge-green">3회</span></td><td>07.20~07.23</td><td>08.07~09.01</td><td>09.09</td><td>09.21~09.28</td><td>10.24~11.13</td><td>12.11 / 12.18</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- GTQ·GTQi -->
+        <div class="panel" id="p3">
+          <div class="note">📌 주관: 한국생산성본부 (KPC) | GTQ(포토샵)·GTQi(일러스트) 연 12회 | 매월 4주차 토요일</div>
+          <div class="sec-header"><h3>2026년 GTQ / GTQi 시험 일정</h3><span class="sec-badge">연 12회</span><div class="line"></div></div>
+          <div class="list-grid">
+            <div class="list-item"><div class="month">01월</div><div class="date">1월 24일 (토)</div><div class="recv">접수 12.24~12.31</div></div>
+            <div class="list-item"><div class="month">02월</div><div class="date">2월 28일 (토)</div><div class="recv">접수 01.28~02.04</div></div>
+            <div class="list-item"><div class="month">03월</div><div class="date">3월 28일 (토)</div><div class="recv">접수 02.25~03.04</div></div>
+            <div class="list-item"><div class="month">04월</div><div class="date">4월 25일 (토)</div><div class="recv">접수 03.25~04.01</div></div>
+            <div class="list-item"><div class="month">05월</div><div class="date">5월 30일 (토)</div><div class="recv">접수 04.29~05.06</div></div>
+            <div class="list-item"><div class="month">06월</div><div class="date">6월 27일 (토)</div><div class="recv">접수 05.27~06.04</div></div>
+            <div class="list-item"><div class="month">07월</div><div class="date">7월 25일 (토)</div><div class="recv">접수 06.24~07.01</div></div>
+            <div class="list-item"><div class="month">08월</div><div class="date">8월 22일 (토)</div><div class="recv">접수 07.22~07.29</div></div>
+            <div class="list-item"><div class="month">09월</div><div class="date">9월 19일 (토)</div><div class="recv">접수 08.19~08.26</div></div>
+            <div class="list-item"><div class="month">10월</div><div class="date">10월 24일 (토)</div><div class="recv">접수 09.23~09.30</div></div>
+            <div class="list-item"><div class="month">11월</div><div class="date">11월 28일 (토)</div><div class="recv">접수 10.28~11.04</div></div>
+            <div class="list-item"><div class="month">12월</div><div class="date">12월 19일 (토)</div><div class="recv">접수 11.18~11.25</div></div>
+          </div>
         </div>
       </div>
     </div>
   </div>
+
   <script src="/assets/nav.js"></script>
+  <script>
+    function setTab(idx, btn) {
+      document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('p'+idx).classList.add('active');
+    }
+  </script>
 </body>
 </html>
