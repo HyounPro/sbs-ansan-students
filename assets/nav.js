@@ -1,6 +1,6 @@
 const NAV_ITEMS = [
   { label: '홈', path: '/' },
-  { label: '수업시간표', path: '/schedule/' },
+  { label: '격일시간표', path: '/schedule/' },
   { label: '수업준비물', path: '/materials/' },
   { label: '학습자료', path: '/learning/' },
   { label: '연간시험일정', path: '/exam/' },
