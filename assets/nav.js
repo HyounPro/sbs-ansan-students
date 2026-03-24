@@ -18,22 +18,37 @@ function renderNav() {
     return `<li><a href="${item.path}" class="${isActive ? 'active' : ''}">${item.label}</a></li>`;
   }).join('');
 
+  const drawerLinks = NAV_ITEMS.map(item => {
+    const isActive = currentPath === item.path ||
+      (item.path !== '/' && currentPath.startsWith(item.path));
+    return `<li><a href="${item.path}" class="${isActive ? 'active' : ''}" onclick="closeMenu()">${item.label}</a></li>`;
+  }).join('');
+
+  // nav 내부 (로고 + 데스크탑 메뉴 + 햄버거)
   nav.innerHTML = `
     <a href="/" class="nav-logo">
       <img src="/assets/logo.png" alt="SBS아카데미 안산" style="height:36px;width:auto;object-fit:contain;" />
     </a>
-    <!-- 데스크탑 메뉴 -->
-    <ul class="nav-links" id="navLinks">${links}</ul>
-    <!-- 햄버거 버튼 (모바일) -->
+    <ul class="nav-links">${links}</ul>
     <button class="nav-hamburger" id="hamburgerBtn" onclick="toggleMenu()" aria-label="메뉴 열기">
       <span></span><span></span><span></span>
     </button>
-    <!-- 모바일 드로어 -->
-    <div class="nav-drawer" id="navDrawer">
-      <ul class="drawer-links">${links}</ul>
-    </div>
-    <div class="drawer-overlay" id="drawerOverlay" onclick="closeMenu()"></div>
   `;
+
+  // 드로어 + 오버레이는 body에 직접 추가
+  if (!document.getElementById('navDrawer')) {
+    const drawer = document.createElement('div');
+    drawer.className = 'nav-drawer';
+    drawer.id = 'navDrawer';
+    drawer.innerHTML = `<ul class="drawer-links">${drawerLinks}</ul>`;
+    document.body.appendChild(drawer);
+
+    const overlay = document.createElement('div');
+    overlay.className = 'drawer-overlay';
+    overlay.id = 'drawerOverlay';
+    overlay.onclick = closeMenu;
+    document.body.appendChild(overlay);
+  }
 }
 
 function toggleMenu() {
@@ -55,9 +70,10 @@ function closeMenu() {
   const drawer = document.getElementById('navDrawer');
   const overlay = document.getElementById('drawerOverlay');
   const btn = document.getElementById('hamburgerBtn');
+  if (!drawer) return;
   drawer.classList.remove('open');
   overlay.classList.remove('show');
-  btn.classList.remove('open');
+  if (btn) btn.classList.remove('open');
   document.body.style.overflow = '';
 }
 
