@@ -14,12 +14,114 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:image" content="https://sbs-ansan-notice.co.kr/assets/og-image.png" />
   <link rel="stylesheet" href="/assets/style.css" />
+  <style>
+    /* 교재몰 바로가기 버튼 */
+    .store-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: rgba(255,255,255,0.7);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,0.9);
+      border-radius: 14px; padding: 14px 24px;
+      text-decoration: none; color: #1a1a2e;
+      font-size: 14px; font-weight: 700;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      transition: all 0.2s; margin-bottom: 36px;
+    }
+    .store-btn:hover { background: rgba(255,255,255,0.9); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.1); }
+    .store-btn .icon { font-size: 20px; }
+    .store-btn .arrow { color: #a78bfa; margin-left: 4px; }
+
+    /* 검색 */
+    .search-wrap {
+      position: relative; margin-bottom: 28px;
+    }
+    .search-input {
+      width: 100%; padding: 14px 20px 14px 48px;
+      background: rgba(255,255,255,0.65);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,0.9);
+      border-radius: 14px; font-size: 14px;
+      font-family: 'Noto Sans KR', sans-serif;
+      color: #1a1a2e; outline: none;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+      transition: all 0.2s;
+    }
+    .search-input::placeholder { color: #bbb; }
+    .search-input:focus { background: rgba(255,255,255,0.85); border-color: rgba(167,139,250,0.4); box-shadow: 0 4px 20px rgba(139,92,246,0.1); }
+    .search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 18px; pointer-events: none; }
+    .search-count { font-size: 12px; color: #bbb; margin-bottom: 20px; }
+
+    /* 카드 그리드 */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+
+    /* 준비물 카드 */
+    .mat-card {
+      background: rgba(255,255,255,0.55);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.85);
+      border-radius: 20px; overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.9);
+      transition: all 0.25s;
+    }
+    .mat-card::before {
+      content: ''; display: block;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+    }
+    .mat-card:hover { transform: translateY(-4px); background: rgba(255,255,255,0.72); box-shadow: 0 12px 40px rgba(0,0,0,0.09); }
+    .mat-card.hidden { display: none; }
+
+    /* 이미지 영역 */
+    .mat-img {
+      width: 100%; aspect-ratio: 4/3;
+      object-fit: contain;
+      background: rgba(255,255,255,0.6);
+      padding: 16px;
+    }
+
+    /* 이미지 없을 때 플레이스홀더 */
+    .mat-img-placeholder {
+      width: 100%; aspect-ratio: 4/3;
+      background: rgba(255,255,255,0.4);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 40px; color: #ddd;
+    }
+
+    /* 카드 바디 */
+    .mat-body { padding: 18px 20px 20px; }
+    .mat-subject {
+      font-size: 16px; font-weight: 700; color: #1a1a2e;
+      margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
+    }
+    .mat-badge {
+      font-size: 10px; font-weight: 700; letter-spacing: 1px;
+      padding: 2px 8px; border-radius: 20px;
+      background: rgba(167,139,250,0.12);
+      border: 1px solid rgba(167,139,250,0.25);
+      color: #a78bfa;
+    }
+    .mat-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+    .mat-list li {
+      font-size: 12.5px; color: #666;
+      display: flex; align-items: flex-start; gap: 6px; line-height: 1.5;
+    }
+    .mat-list li::before { content: '·'; color: #a78bfa; font-weight: 900; flex-shrink: 0; margin-top: 1px; }
+
+    /* 검색 결과 없음 */
+    .no-result { display: none; text-align: center; padding: 60px 20px; color: #bbb; }
+    .no-result.show { display: block; }
+  </style>
 </head>
 <body>
   <div class="bg-orb bg-orb1"></div>
   <div class="bg-orb bg-orb2"></div>
   <div class="bg-orb bg-orb3"></div>
   <div class="bg-orb bg-orb4"></div>
+
   <div class="wrap">
     <nav id="nav"></nav>
     <div class="page-wrap">
@@ -28,14 +130,223 @@
         <h1>SBS아카데미<br/><span class="g">수업준비물</span></h1>
         <p>수강생 분들은 수업 전, 꼭 확인해주세요!</p>
       </div>
-      <div class="section">
-        <div class="empty-state">
-          <div class="icon">🎒</div>
-          <p>콘텐츠를 준비 중입니다.</p>
+
+      <div class="section" style="padding-top:0;">
+        <!-- 교재몰 바로가기 -->
+        <a href="https://www.kedustore.com/" target="_blank" class="store-btn">
+          <span class="icon">🛒</span>
+          <span>교재몰 바로가기</span>
+          <span class="arrow">→</span>
+        </a>
+
+        <!-- 검색 -->
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" class="search-input" id="searchInput" placeholder="과목명으로 검색하세요..." oninput="filterCards()" />
+        </div>
+        <div class="search-count" id="searchCount">총 14개 과목</div>
+
+        <!-- 카드 그리드 -->
+        <div class="card-grid" id="cardGrid">
+
+          <!-- 3ds Max -->
+          <div class="mat-card" data-subject="3ds Max 맥스">
+            <img class="mat-img" src="/assets/materials/3dsmax.png" alt="3ds Max 교재" />
+            <div class="mat-body">
+              <div class="mat-subject">3ds Max <span class="mat-badge">3D</span></div>
+              <ul class="mat-list"><li>교재 (멘토시리즈 3ds Max)</li></ul>
+            </div>
+          </div>
+
+          <!-- AutoCAD -->
+          <div class="mat-card" data-subject="AutoCAD 캐드 오토캐드">
+            <img class="mat-img" src="/assets/materials/autocad.png" alt="AutoCAD 교재" />
+            <div class="mat-body">
+              <div class="mat-subject">AutoCAD <span class="mat-badge">CAD</span></div>
+              <ul class="mat-list"><li>교재 (멘토시리즈 오토캐드)</li></ul>
+            </div>
+          </div>
+
+          <!-- 발상과표현 -->
+          <div class="mat-card" data-subject="발상과표현 발상 표현">
+            <img class="mat-img" src="/assets/materials/concept.png" alt="발상과표현 교재" />
+            <div class="mat-body">
+              <div class="mat-subject">발상과표현 <span class="mat-badge">실기</span></div>
+              <ul class="mat-list">
+                <li>교재 (Basic Artwork 발상과 표현)</li>
+                <li>4B연필, 톰보우지우개(드로잉용)</li>
+                <li>스케치북 200g (A4), 30cm 자</li>
+                <li>모눈종이, 샤프, 커터칼</li>
+                <li>콜라주 수업: 잡지·신문지 등 이미지 있는 판촉물, 가위, 풀</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- 색채학 -->
+          <div class="mat-card" data-subject="색채학 색채">
+            <img class="mat-img" src="/assets/materials/color.png" alt="색채학 준비물" />
+            <div class="mat-body">
+              <div class="mat-subject">색채학 <span class="mat-badge">실기</span></div>
+              <ul class="mat-list">
+                <li>교재 (Basic Artwork 색채학)</li>
+                <li>120색 종이 알파컬러 (없을 시 KS195 사용 가능)</li>
+                <li>가위, 풀 (사이즈 M 이상), 필기구, 지우개</li>
+                <li>탬플릿 자 (사각)</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- 스케치업 -->
+          <div class="mat-card" data-subject="스케치업 SketchUp">
+            <img class="mat-img" src="/assets/materials/sketchup.png" alt="스케치업 교재" />
+            <div class="mat-body">
+              <div class="mat-subject">스케치업 <span class="mat-badge">3D</span></div>
+              <ul class="mat-list"><li>교재 (멘토시리즈 스케치업)</li></ul>
+            </div>
+          </div>
+
+          <!-- 인디자인 -->
+          <div class="mat-card" data-subject="인디자인 InDesign">
+            <img class="mat-img" src="/assets/materials/indesign.png" alt="인디자인 교재" />
+            <div class="mat-body">
+              <div class="mat-subject">인디자인 <span class="mat-badge">편집</span></div>
+              <ul class="mat-list"><li>교재 (멘토시리즈 인디자인CC)</li></ul>
+            </div>
+          </div>
+
+          <!-- 일러스트 -->
+          <div class="mat-card" data-subject="일러스트 Illustrator">
+            <img class="mat-img" src="/assets/materials/illustrator.png" alt="일러스트 교재" />
+            <div class="mat-body">
+              <div class="mat-subject">일러스트 <span class="mat-badge">그래픽</span></div>
+              <ul class="mat-list"><li>교재 (멘토시리즈 일러스트레이터+AI)</li></ul>
+            </div>
+          </div>
+
+          <!-- 전산세무 2급 -->
+          <div class="mat-card" data-subject="전산세무 세무 2급">
+            <div class="mat-img-placeholder">📒</div>
+            <div class="mat-body">
+              <div class="mat-subject">전산세무 2급 <span class="mat-badge">회계</span></div>
+              <ul class="mat-list"><li>교재 — 수업 당일 학원에서 제공</li></ul>
+            </div>
+          </div>
+
+          <!-- 전산회계 1급 -->
+          <div class="mat-card" data-subject="전산회계 회계 1급">
+            <div class="mat-img-placeholder">📒</div>
+            <div class="mat-body">
+              <div class="mat-subject">전산회계 1급 <span class="mat-badge">회계</span></div>
+              <ul class="mat-list"><li>교재 — 수업 당일 학원에서 제공</li></ul>
+            </div>
+          </div>
+
+          <!-- 컬러리스트 -->
+          <div class="mat-card" data-subject="컬러리스트 colorist">
+            <img class="mat-img" src="/assets/materials/colorist.png" alt="컬러리스트 준비물" />
+            <div class="mat-body">
+              <div class="mat-subject">컬러리스트 <span class="mat-badge">실기</span></div>
+              <ul class="mat-list">
+                <li>교재 (예문사 컬러리스트 기사·산업기사 실기)</li>
+                <li>컬러리스트 혼색용 12색 포스터 물감 (알파 칼라, 40ml)</li>
+                <li>컬러리스트 Hue&Tone 색종이 KS195 (중형 이상)</li>
+                <li>화홍 평붓 5호 × 10개 이상 (반드시 5호로 구매)</li>
+                <li>탬플릿 자(사각), 검정 볼펜, 가위, 풀, 커터칼, 필기구</li>
+                <li>종이 팔레트 A4, 커팅 매트, 30cm 자</li>
+                <li>수정 테이프, 스카치 테이프</li>
+                <li>걸레, 물티슈 (붓 물기 제거·손 닦는 용도)</li>
+                <li>백색 스케치북 (8절), 양초 (밀리는 용도)</li>
+                <li>달리 수채화 물통 (분할된 물통 추천)</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- 컴활 -->
+          <div class="mat-card" data-subject="컴활 컴퓨터활용능력 1급">
+            <img class="mat-img" src="/assets/materials/comhwal.png" alt="컴활 교재" />
+            <div class="mat-body">
+              <div class="mat-subject">컴퓨터활용능력 1급 <span class="mat-badge">자격증</span></div>
+              <ul class="mat-list"><li>교재 (멘토시리즈 컴퓨터활용능력 1급 실기)</li></ul>
+            </div>
+          </div>
+
+          <!-- 디테일 일러스트 -->
+          <div class="mat-card" data-subject="디테일 일러스트 디일러">
+            <img class="mat-img" src="/assets/materials/detail_illust.png" alt="디테일 일러스트 교재" />
+            <div class="mat-body">
+              <div class="mat-subject">디테일 일러스트 <span class="mat-badge">그래픽</span></div>
+              <ul class="mat-list"><li>교재 (멘토시리즈 디테일 일러스트)</li></ul>
+            </div>
+          </div>
+
+          <!-- 포토샵 -->
+          <div class="mat-card" data-subject="포토샵 Photoshop">
+            <img class="mat-img" src="/assets/materials/photoshop.png" alt="포토샵 교재" />
+            <div class="mat-body">
+              <div class="mat-subject">포토샵 <span class="mat-badge">그래픽</span></div>
+              <ul class="mat-list"><li>교재 (멘토시리즈 포토샵+AI)</li></ul>
+            </div>
+          </div>
+
+          <!-- 포토웍스 -->
+          <div class="mat-card" data-subject="포토웍스 Photoworks">
+            <img class="mat-img" src="/assets/materials/photoworks.png" alt="포토웍스 교재" />
+            <div class="mat-body">
+              <div class="mat-subject">포토웍스 <span class="mat-badge">그래픽</span></div>
+              <ul class="mat-list"><li>교재 (멘토시리즈 포토웍스)</li></ul>
+            </div>
+          </div>
+
+          <!-- 해부학 -->
+          <div class="mat-card" data-subject="해부학">
+            <img class="mat-img" src="/assets/materials/anatomy.png" alt="해부학 준비물" />
+            <div class="mat-body">
+              <div class="mat-subject">해부학 <span class="mat-badge">실기</span></div>
+              <ul class="mat-list">
+                <li>교재 (Basic Artwork 해부학)</li>
+                <li>스케치북 (8절), 4B연필</li>
+                <li>톰보우지우개 (드로잉용), 샤프</li>
+                <li>커터칼, 15cm 자</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- MOS -->
+          <div class="mat-card" data-subject="MOS 모스">
+            <img class="mat-img" src="/assets/materials/mos.png" alt="MOS 교재" />
+            <div class="mat-body">
+              <div class="mat-subject">MOS <span class="mat-badge">자격증</span></div>
+              <ul class="mat-list"><li>교재 (멘토시리즈 모스365 세트)</li></ul>
+            </div>
+          </div>
+
+        </div>
+        <div class="no-result" id="noResult">
+          <div style="font-size:40px;margin-bottom:12px;">🔍</div>
+          <p>검색 결과가 없습니다.</p>
         </div>
       </div>
     </div>
   </div>
+
   <script src="/assets/nav.js"></script>
+  <script>
+    function filterCards() {
+      const q = document.getElementById('searchInput').value.trim().toLowerCase();
+      const cards = document.querySelectorAll('.mat-card');
+      let count = 0;
+      cards.forEach(card => {
+        const subject = card.dataset.subject.toLowerCase();
+        const text = card.innerText.toLowerCase();
+        if (!q || subject.includes(q) || text.includes(q)) {
+          card.classList.remove('hidden'); count++;
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+      document.getElementById('searchCount').textContent = q ? `"${q}" 검색 결과 ${count}개` : `총 ${count}개 과목`;
+      document.getElementById('noResult').classList.toggle('show', count === 0);
+    }
+  </script>
 </body>
 </html>
