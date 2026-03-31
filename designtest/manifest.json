@@ -4,11 +4,11 @@
   "description": "SBS아카데미 컴퓨터아트학원 디자인 진로적성검사",
   "start_url": "/designtest/",
   "display": "standalone",
-  "background_color": "#ffffff",
+  "background_color": "#111111",
   "theme_color": "#111111",
   "orientation": "portrait",
   "icons": [
-    { "src": "/designtest/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/designtest/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
     { "src": "/designtest/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
   ]
 }
