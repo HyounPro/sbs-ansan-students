@@ -386,25 +386,41 @@
 <script>
 // ── 비밀번호 설정 (여기서 변경) ──────────────────────────
 const ADMIN_PASSWORD = 'sbs2026';
-// ─────────────────────────────────────────────────────────
+
+// ── Supabase 설정 ─────────────────────────────────────────
+const SUPABASE_URL     = 'https://fssvwketkcvwxbwkckxb.supabase.co';
+const SUPABASE_SECRET  = 'sb_secret_HDxQ7Dfk_EWkhRsDTZbNyQ_nsFg7k9q';
 
 // ── 항목 정의 ─────────────────────────────────────────────
 const BASIC_SECTIONS = ['조형력','상상력','손재주','창의력','컴퓨터 활용','기획력','감수성'];
 const MAJOR_SECTIONS = ['웹디자인','편집디자인','실내건축디자인','산업디자인','애니메이션','영상디자인'];
 const ALL_SECTIONS   = [...BASIC_SECTIONS, ...MAJOR_SECTIONS];
 
-const Q_SECTION_MAP = [
-  {name:'조형력',count:7},{name:'상상력',count:6},{name:'손재주',count:5},
-  {name:'창의력',count:4},{name:'컴퓨터 활용',count:3},{name:'기획력',count:3},{name:'감수성',count:3},
-  {name:'웹디자인',count:5},{name:'편집디자인',count:5},{name:'실내건축디자인',count:5},
-  {name:'산업디자인',count:3},{name:'애니메이션',count:3},{name:'영상디자인',count:3},
-];
+// ── 캐시 ──────────────────────────────────────────────────
+let _cachedData = null;
 
-// ── 데이터 ────────────────────────────────────────────────
-function getResults() {
-  try { return JSON.parse(localStorage.getItem('catd_results') || '[]'); }
-  catch { return []; }
+// ── Supabase fetch ────────────────────────────────────────
+async function fetchResults() {
+  const res = await fetch(
+    `${SUPABASE_URL}/rest/v1/design_test_results?select=*&order=submitted_at.asc`,
+    {
+      headers: {
+        'apikey': SUPABASE_SECRET,
+        'Authorization': `Bearer ${SUPABASE_SECRET}`,
+      }
+    }
+  );
+  if (!res.ok) throw new Error('fetch failed');
+  const data = await res.json();
+  // normalize field names
+  _cachedData = data.map(r => ({
+    ...r,
+    submittedAt: r.submitted_at,
+  }));
+  return _cachedData;
 }
+
+function getCache() { return _cachedData || []; }
 
 // ── 로그인 ────────────────────────────────────────────────
 function doLogin() {
@@ -426,18 +442,27 @@ function doLogout() {
 }
 
 // ── Init ──────────────────────────────────────────────────
-function init() {
+async function init() {
   if (sessionStorage.getItem('mentor_auth') === '1') {
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('app').style.display = 'block';
   }
-  updateStats();
-  renderCards();
+  // 로딩 표시
+  document.getElementById('cards-grid').innerHTML =
+    '<div class="empty-state"><div class="empty-icon">⏳</div>데이터를 불러오는 중...</div>';
+  try {
+    await fetchResults();
+    updateStats();
+    renderCards();
+  } catch(e) {
+    document.getElementById('cards-grid').innerHTML =
+      '<div class="empty-state"><div class="empty-icon">⚠️</div>데이터를 불러오지 못했습니다.<br>새로고침 해주세요.</div>';
+  }
 }
 
 // ── Stats ─────────────────────────────────────────────────
 function updateStats() {
-  const data = getResults();
+  const data = getCache();
   const today = new Date().toDateString();
   const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
 
@@ -452,7 +477,7 @@ function updateStats() {
 
 // ── Render Cards ──────────────────────────────────────────
 function renderCards() {
-  let data = getResults();
+  let data = [...getCache()];
   const q = document.getElementById('search-input').value.trim().toLowerCase();
   const sort = document.getElementById('sort-select').value;
 
@@ -461,6 +486,7 @@ function renderCards() {
   else if (sort === 'oldest') data.sort((a,b) => new Date(a.submittedAt) - new Date(b.submittedAt));
   else data.sort((a,b) => (a.name || '').localeCompare(b.name || '', 'ko'));
 
+  const allData = getCache();
   const grid = document.getElementById('cards-grid');
 
   if (!data.length) {
@@ -468,20 +494,17 @@ function renderCards() {
     return;
   }
 
-  // Re-index for display
-  const allData = getResults();
   grid.innerHTML = data.map((r, i) => {
     const origIdx = allData.findIndex(x => x.id === r.id);
     return buildCard(r, origIdx + 1, i + 1);
   }).join('');
 }
 
-function buildCard(r, num, displayNum) {
+function buildCard(r, num) {
   const scores = r.scores || {};
   const date = new Date(r.submittedAt);
   const dateStr = date.toLocaleDateString('ko-KR', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
 
-  // Basic section chips
   const basicChips = BASIC_SECTIONS.map(sec => {
     const s = scores[sec];
     const pct = s?.pct ?? 0;
@@ -493,30 +516,18 @@ function buildCard(r, num, displayNum) {
     </div>`;
   }).join('');
 
-  // Major section chips
   const majorChips = MAJOR_SECTIONS.map(sec => {
     const s = scores[sec];
     const pct = s?.pct ?? 0;
     const lvl = pct >= 80 ? 'level-high' : pct >= 60 ? 'level-mid' : 'level-low';
     return `<div class="score-chip">
-      <span class="score-chip-label">${sec.replace('디자인','').replace('건축','건축')}</span>
+      <span class="score-chip-label">${sec.replace('디자인','').replace('실내건축','실내건축')}</span>
       <span class="score-chip-val ${lvl}">${s?.avg ?? '-'}</span>
       <span class="score-chip-pct">${pct}%</span>
     </div>`;
   }).join('');
 
-  // Answers grid (55칸)
   const answers = r.answers || [];
-  let ansLabels = '';
-  let ansCells = '';
-  for (let i = 0; i < 55; i += 11) {
-    const chunk = answers.slice(i, i + 11);
-    ansLabels += chunk.map((_, j) => `<span class="ans-label">${i+j+1}</span>`).join('');
-    ansCells  += chunk.map(v => `<div class="ans-cell v${v}">${v}</div>`).join('');
-  }
-  // Last row padding
-  const rem = 55 % 11;
-  // 55 / 11 = 5 rows exactly, no padding needed
 
   return `<div class="result-card" id="card-${r.id}">
     <div class="card-header">
@@ -532,14 +543,12 @@ function buildCard(r, num, displayNum) {
       </div>
       <span class="card-idx">${num}</span>
     </div>
-
     <div class="card-scores">
       <div class="scores-group-title">기초소양 (Part A)</div>
       <div class="scores-row">${basicChips}</div>
       <div class="scores-group-title">전공소양 (Part B)</div>
       <div class="scores-row">${majorChips}</div>
     </div>
-
     <div class="card-answers">
       <button class="answers-toggle" onclick="toggleAnswers(this)">
         <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>
@@ -553,15 +562,14 @@ function buildCard(r, num, displayNum) {
         }).join('')}
       </div>
     </div>
-
     <div class="card-footer">
       <span class="card-date">${dateStr}</span>
       <div class="copy-row">
-        <button class="btn-sm btn-sm-outline" onclick="copyCard('${r.id}')">
+        <button class="btn-sm btn-sm-outline" onclick="copyCard(${r.id})">
           <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184"/></svg>
           이 카드 복사
         </button>
-        <button class="btn-sm btn-sm-danger" onclick="deleteCard('${r.id}')">삭제</button>
+        <button class="btn-sm btn-sm-danger" onclick="deleteCard(${r.id})">삭제</button>
       </div>
     </div>
   </div>`;
@@ -575,10 +583,9 @@ function toggleAnswers(btn) {
   btn.childNodes[btn.childNodes.length-1].textContent = open ? ' 선택 번호 접기' : ' 선택 번호 보기';
 }
 
-// ── Copy single card (탭 구분) ─────────────────────────────
+// ── Copy single card ──────────────────────────────────────
 function copyCard(id) {
-  const data = getResults();
-  const r = data.find(x => x.id == id);
+  const r = getCache().find(x => x.id == id);
   if (!r) return;
   const scores = r.scores || {};
   const row = [
@@ -591,18 +598,33 @@ function copyCard(id) {
   navigator.clipboard.writeText(row).then(() => showToast('클립보드에 복사되었습니다!'));
 }
 
-// ── Delete card ───────────────────────────────────────────
-function deleteCard(id) {
+// ── Delete card (Supabase) ────────────────────────────────
+async function deleteCard(id) {
   if (!confirm('이 결과를 삭제하시겠습니까?')) return;
-  const data = getResults().filter(x => x.id != id);
-  localStorage.setItem('catd_results', JSON.stringify(data));
+  await fetch(`${SUPABASE_URL}/rest/v1/design_test_results?id=eq.${id}`, {
+    method: 'DELETE',
+    headers: {
+      'apikey': SUPABASE_SECRET,
+      'Authorization': `Bearer ${SUPABASE_SECRET}`,
+    }
+  });
+  await fetchResults();
   updateStats(); renderCards();
+  showToast('삭제되었습니다.');
 }
 
-// ── Clear all ─────────────────────────────────────────────
-function clearAll() {
-  if (!confirm(`전체 ${getResults().length}건의 결과를 모두 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.`)) return;
-  localStorage.removeItem('catd_results');
+// ── Clear all (Supabase) ──────────────────────────────────
+async function clearAll() {
+  const total = getCache().length;
+  if (!confirm(`전체 ${total}건의 결과를 모두 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.`)) return;
+  await fetch(`${SUPABASE_URL}/rest/v1/design_test_results?id=gte.0`, {
+    method: 'DELETE',
+    headers: {
+      'apikey': SUPABASE_SECRET,
+      'Authorization': `Bearer ${SUPABASE_SECRET}`,
+    }
+  });
+  await fetchResults();
   updateStats(); renderCards();
   showToast('전체 삭제 완료');
 }
@@ -618,22 +640,18 @@ function closeExcelModal() {
 
 function updateExcelPreview() {
   const mode = document.getElementById('excel-col-select').value;
-  const data = getResults().slice().sort((a,b) => new Date(a.submittedAt) - new Date(b.submittedAt));
+  const data = [...getCache()].sort((a,b) => new Date(a.submittedAt) - new Date(b.submittedAt));
 
-  let header = '';
-  let rows = [];
+  let header = '', rows = [];
 
   if (mode === 'summary') {
     header = ['번호','이름','핸드폰','성별','생년월일','학교/직장','전공','검사일',
-      ...BASIC_SECTIONS.map(s => s+'(평균)'),
-      ...MAJOR_SECTIONS.map(s => s+'(평균)'),
-      ...BASIC_SECTIONS.map(s => s+'(%)'),
-      ...MAJOR_SECTIONS.map(s => s+'(%)'),
+      ...BASIC_SECTIONS.map(s => s+'(평균)'), ...MAJOR_SECTIONS.map(s => s+'(평균)'),
+      ...BASIC_SECTIONS.map(s => s+'(%)'),   ...MAJOR_SECTIONS.map(s => s+'(%)'),
     ].join('\t');
     rows = data.map((r, i) => {
       const sc = r.scores || {};
-      return [
-        i+1, r.name, r.phone, r.gender, r.birth, r.school, r.major,
+      return [i+1, r.name, r.phone, r.gender, r.birth, r.school, r.major,
         new Date(r.submittedAt).toLocaleDateString('ko-KR'),
         ...ALL_SECTIONS.map(s => sc[s]?.avg ?? ''),
         ...ALL_SECTIONS.map(s => sc[s]?.pct ?? ''),
@@ -649,7 +667,6 @@ function updateExcelPreview() {
       return [i+1, r.name, ...ALL_SECTIONS.map(s => sc[s]?.pct ?? '')].join('\t');
     });
   }
-
   document.getElementById('excel-textarea').value = [header, ...rows].join('\n');
 }
 

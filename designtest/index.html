@@ -506,28 +506,53 @@ function calcScores() {
   return result;
 }
 
+// ── Supabase 설정 ──────────────────────────────────────────
+const SUPABASE_URL = 'https://fssvwketkcvwxbwkckxb.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_yYO7El06R9SFJgW9OPBzuQ_U2vk7No1';
+
 // ── Show Result & Save ─────────────────────────────────────
 function showResult() {
   showPage('page-result');
   const scores = calcScores();
 
   const record = {
-    id: Date.now(),
-    submittedAt: new Date().toISOString(),
-    ...userInfo,
+    submitted_at: new Date().toISOString(),
+    name:    userInfo.name,
+    phone:   userInfo.phone,
+    gender:  userInfo.gender,
+    birth:   userInfo.birth,
+    school:  userInfo.school,
+    major:   userInfo.major,
     answers: allQuestions.map(q => answers[q.globalIndex] || 0),
-    scores,
+    scores:  scores,
   };
 
+  saveToSupabase(record);
+}
+
+async function saveToSupabase(record) {
+  const statusEl = document.getElementById('submit-status');
   try {
-    const existing = JSON.parse(localStorage.getItem('catd_results') || '[]');
-    existing.push(record);
-    localStorage.setItem('catd_results', JSON.stringify(existing));
-    document.getElementById('submit-status').innerHTML =
-      '<span class="status-dot success"></span>결과가 성공적으로 저장되었습니다.';
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/design_test_results`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Prefer': 'return=minimal',
+      },
+      body: JSON.stringify(record),
+    });
+    if (res.ok) {
+      statusEl.innerHTML = '<span class="status-dot success"></span>결과가 성공적으로 저장되었습니다.';
+    } else {
+      const err = await res.text();
+      console.error('Supabase error:', err);
+      statusEl.innerHTML = '<span class="status-dot error"></span>저장 중 오류가 발생했습니다.';
+    }
   } catch (e) {
-    document.getElementById('submit-status').innerHTML =
-      '<span class="status-dot error"></span>저장 중 오류가 발생했습니다.';
+    console.error(e);
+    statusEl.innerHTML = '<span class="status-dot error"></span>저장 중 오류가 발생했습니다.';
   }
 }
 
