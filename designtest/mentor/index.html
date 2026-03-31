@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>관리자 페이지 — 디자인 적성검사</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #f5f5f5; --card: #ffffff; --border: #e8e8e8; --border-dark: #d0d0d0;
+    --text-primary: #111; --text-secondary: #555; --text-muted: #999;
+    --accent: #111; --accent-bg: #f0f0f0;
+    --radius: 14px; --radius-sm: 8px; --radius-xs: 6px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 20px rgba(0,0,0,0.05);
+    --shadow-card: 0 2px 8px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04);
+  }
+  html { font-size: 16px; scroll-behavior: smooth; }
+  body { font-family: 'Noto Sans KR', sans-serif; background: var(--bg); color: var(--text-primary); min-height: 100vh; -webkit-font-smoothing: antialiased; }
+
+  /* ── Login Screen ── */
+  #login-screen {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh; padding: 20px;
+  }
+  .login-box {
+    background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow);
+    padding: 48px 40px; width: 100%; max-width: 380px; text-align: center;
+  }
+  .login-logo {
+    width: 48px; height: 48px; margin: 0 auto 20px;
+  }
+  .login-title { font-size: 18px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 6px; }
+  .login-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 32px; }
+  .login-label {
+    display: block; font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; text-align: left;
+  }
+  .login-input {
+    width: 100%; padding: 12px 16px; font-size: 15px; font-family: 'Noto Sans KR', sans-serif;
+    color: var(--text-primary); background: var(--bg); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); outline: none; transition: border-color 0.2s; margin-bottom: 16px;
+    letter-spacing: 0.08em;
+  }
+  .login-input:focus { border-color: var(--accent); }
+  .login-btn {
+    width: 100%; padding: 13px; font-size: 14px; font-weight: 600;
+    font-family: 'Noto Sans KR', sans-serif; color: #fff; background: var(--accent);
+    border: none; border-radius: var(--radius-sm); cursor: pointer; transition: opacity 0.2s;
+  }
+  .login-btn:hover { opacity: 0.85; }
+  .login-error { font-size: 12px; color: #cc4444; margin-top: 12px; display: none; }
+
+  /* ── Main App ── */
+  #app { display: none; }
+
+  /* Header */
+  .app-header {
+    background: var(--card); border-bottom: 1px solid var(--border);
+    padding: 0 24px; position: sticky; top: 0; z-index: 100;
+  }
+  .app-header-inner {
+    max-width: 1200px; margin: 0 auto; height: 56px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  }
+  .app-header-left { display: flex; align-items: center; gap: 12px; }
+  .header-logo { width: 28px; height: 28px; }
+  .header-title { font-size: 14px; font-weight: 700; }
+  .header-badge {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--text-muted); background: var(--bg); border: 1px solid var(--border);
+    padding: 3px 10px; border-radius: 100px;
+  }
+  .header-right { display: flex; align-items: center; gap: 10px; }
+  .btn-sm {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 14px; font-size: 12px; font-weight: 600; font-family: 'Noto Sans KR', sans-serif;
+    border-radius: var(--radius-xs); cursor: pointer; transition: all 0.15s; white-space: nowrap;
+  }
+  .btn-sm-outline {
+    color: var(--text-secondary); background: var(--card); border: 1px solid var(--border);
+  }
+  .btn-sm-outline:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-sm-solid { color: #fff; background: var(--accent); border: 1px solid var(--accent); }
+  .btn-sm-solid:hover { opacity: 0.85; }
+  .btn-sm-danger { color: #cc4444; background: var(--card); border: 1px solid #eecaca; }
+  .btn-sm-danger:hover { background: #fff5f5; border-color: #cc4444; }
+
+  /* Stats Bar */
+  .stats-bar { background: var(--card); border-bottom: 1px solid var(--border); padding: 0 24px; }
+  .stats-bar-inner {
+    max-width: 1200px; margin: 0 auto; padding: 14px 0;
+    display: flex; gap: 24px; align-items: center; flex-wrap: wrap;
+  }
+  .stat-item { display: flex; flex-direction: column; gap: 2px; }
+  .stat-num { font-size: 20px; font-weight: 700; letter-spacing: -0.03em; }
+  .stat-label { font-size: 11px; color: var(--text-muted); font-weight: 400; }
+  .stat-divider { width: 1px; height: 32px; background: var(--border); }
+
+  /* Filter / Search bar */
+  .toolbar { padding: 16px 24px; max-width: 1200px; margin: 0 auto; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .search-input {
+    flex: 1; min-width: 200px; padding: 9px 14px; font-size: 13px;
+    font-family: 'Noto Sans KR', sans-serif; color: var(--text-primary);
+    background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-xs);
+    outline: none; transition: border-color 0.2s;
+  }
+  .search-input:focus { border-color: var(--accent); }
+  .filter-select {
+    padding: 9px 12px; font-size: 13px; font-family: 'Noto Sans KR', sans-serif;
+    color: var(--text-primary); background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius-xs); outline: none; cursor: pointer; appearance: none;
+  }
+
+  /* Cards Grid */
+  .cards-wrap { padding: 0 24px 40px; max-width: 1200px; margin: 0 auto; }
+  .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 14px; }
+  .empty-state {
+    grid-column: 1/-1; text-align: center; padding: 80px 20px;
+    color: var(--text-muted); font-size: 14px; line-height: 1.8;
+  }
+  .empty-icon { font-size: 36px; margin-bottom: 12px; }
+
+  /* Result Card */
+  .result-card {
+    background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow-card);
+    overflow: hidden; transition: box-shadow 0.2s, transform 0.15s;
+  }
+  .result-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.10); transform: translateY(-2px); }
+
+  .card-header {
+    padding: 18px 20px 14px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+  }
+  .card-header-left { flex: 1; min-width: 0; }
+  .card-name { font-size: 16px; font-weight: 700; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .card-meta { font-size: 12px; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 6px; }
+  .card-meta-item { display: flex; align-items: center; gap: 3px; }
+  .card-idx {
+    flex-shrink: 0; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; color: var(--text-muted); background: var(--bg);
+    border: 1px solid var(--border); border-radius: 50%;
+  }
+
+  /* Scores Section */
+  .card-scores { padding: 14px 20px; }
+  .scores-group-title {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--text-muted); margin-bottom: 10px;
+  }
+  .scores-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+  .score-chip {
+    display: flex; flex-direction: column; align-items: center;
+    background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-xs);
+    padding: 7px 10px; min-width: 58px; flex: 1;
+  }
+  .score-chip-label { font-size: 9px; color: var(--text-muted); margin-bottom: 4px; text-align: center; line-height: 1.3; }
+  .score-chip-val { font-size: 14px; font-weight: 700; letter-spacing: -0.02em; }
+  .score-chip-pct { font-size: 10px; color: var(--text-muted); margin-top: 1px; }
+
+  /* Color levels */
+  .level-high { color: #1a7a4a; }
+  .level-mid  { color: #b07a00; }
+  .level-low  { color: var(--text-muted); }
+
+  /* Answers raw */
+  .card-answers { padding: 0 20px 14px; }
+  .answers-toggle {
+    display: flex; align-items: center; gap: 6px; cursor: pointer;
+    font-size: 12px; color: var(--text-muted); user-select: none; margin-bottom: 0;
+    background: none; border: none; font-family: 'Noto Sans KR', sans-serif; padding: 0;
+    transition: color 0.15s;
+  }
+  .answers-toggle:hover { color: var(--text-primary); }
+  .answers-panel { display: none; margin-top: 10px; }
+  .answers-panel.open { display: block; }
+  .answers-grid {
+    display: grid; grid-template-columns: repeat(11, 1fr); gap: 3px;
+  }
+  .ans-cell {
+    aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 600; border-radius: 3px; background: var(--bg);
+    color: var(--text-muted); border: 1px solid var(--border);
+  }
+  .ans-cell.v6 { background: #111; color: #fff; border-color: #111; }
+  .ans-cell.v5 { background: #444; color: #fff; border-color: #444; }
+  .ans-cell.v4 { background: #888; color: #fff; border-color: #888; }
+  .ans-cell.v3 { background: #ccc; color: #111; border-color: #ccc; }
+  .ans-cell.v2 { background: #eee; color: #777; border-color: #ddd; }
+  .ans-cell.v1 { background: #f8f8f8; color: #bbb; border-color: #eee; }
+  .ans-label-row { display: grid; grid-template-columns: repeat(11, 1fr); gap: 3px; margin-bottom: 4px; }
+  .ans-label { font-size: 8px; color: var(--text-muted); text-align: center; }
+
+  /* Card Footer */
+  .card-footer {
+    padding: 12px 20px; border-top: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  }
+  .card-date { font-size: 11px; color: var(--text-muted); }
+  .copy-row { display: flex; gap: 6px; }
+
+  /* Copy toast */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: #111; color: #fff; font-size: 13px; font-weight: 500;
+    padding: 10px 20px; border-radius: 100px; opacity: 0; transition: all 0.3s;
+    pointer-events: none; white-space: nowrap; z-index: 9999;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* Excel Copy Modal */
+  .modal-backdrop {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+    z-index: 1000; align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-backdrop.open { display: flex; animation: fadeIn 0.2s ease; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .modal {
+    background: var(--card); border-radius: var(--radius); box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    width: 100%; max-width: 680px; max-height: 80vh; display: flex; flex-direction: column;
+  }
+  .modal-header {
+    padding: 20px 24px 16px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .modal-title { font-size: 15px; font-weight: 700; }
+  .modal-close { background: none; border: none; cursor: pointer; color: var(--text-muted); padding: 4px; border-radius: 4px; }
+  .modal-close:hover { color: var(--text-primary); background: var(--bg); }
+  .modal-body { padding: 20px 24px; overflow-y: auto; }
+  .modal-desc { font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; line-height: 1.6; }
+  .excel-select {
+    width: 100%; margin-bottom: 12px; padding: 9px 12px; font-size: 13px;
+    font-family: 'Noto Sans KR', sans-serif; border: 1px solid var(--border);
+    border-radius: var(--radius-xs); outline: none; background: var(--bg);
+  }
+  .excel-textarea {
+    width: 100%; height: 180px; padding: 12px; font-size: 12px; font-family: 'Courier New', monospace;
+    border: 1px solid var(--border); border-radius: var(--radius-xs); outline: none;
+    background: var(--bg); resize: vertical; color: var(--text-primary); line-height: 1.5;
+  }
+  .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; gap: 8px; justify-content: flex-end; }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    .cards-grid { grid-template-columns: 1fr; }
+    .login-box { padding: 32px 24px; }
+    .app-header-inner { padding: 0; }
+    .stats-bar-inner { gap: 16px; }
+    .toolbar { padding: 12px 16px; }
+    .cards-wrap { padding: 0 16px 40px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════ LOGIN ══════════ -->
+<div id="login-screen">
+  <div class="login-box">
+    <svg class="login-logo" viewBox="0 0 48 48" fill="none">
+      <rect width="48" height="48" rx="14" fill="#111"/>
+      <rect x="12" y="15" width="9" height="9" rx="2" fill="white"/>
+      <rect x="12" y="26" width="9" height="7" rx="2" fill="white" opacity="0.5"/>
+      <rect x="23" y="15" width="13" height="4" rx="2" fill="white"/>
+      <rect x="23" y="21" width="10" height="4" rx="2" fill="white" opacity="0.7"/>
+      <rect x="23" y="27" width="7" height="4" rx="2" fill="white" opacity="0.4"/>
+    </svg>
+    <div class="login-title">관리자 페이지</div>
+    <div class="login-sub">디자인 적성검사 결과 조회</div>
+    <label class="login-label" for="pw-input">비밀번호</label>
+    <input type="password" id="pw-input" class="login-input" placeholder="비밀번호를 입력하세요"
+      onkeydown="if(event.key==='Enter') doLogin()">
+    <button class="login-btn" onclick="doLogin()">로그인</button>
+    <p class="login-error" id="login-error">비밀번호가 올바르지 않습니다.</p>
+  </div>
+</div>
+
+<!-- ══════════ MAIN APP ══════════ -->
+<div id="app">
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="app-header-inner">
+      <div class="app-header-left">
+        <svg class="header-logo" viewBox="0 0 48 48" fill="none">
+          <rect width="48" height="48" rx="14" fill="#111"/>
+          <rect x="12" y="15" width="9" height="9" rx="2" fill="white"/>
+          <rect x="12" y="26" width="9" height="7" rx="2" fill="white" opacity="0.5"/>
+          <rect x="23" y="15" width="13" height="4" rx="2" fill="white"/>
+          <rect x="23" y="21" width="10" height="4" rx="2" fill="white" opacity="0.7"/>
+          <rect x="23" y="27" width="7" height="4" rx="2" fill="white" opacity="0.4"/>
+        </svg>
+        <span class="header-title">디자인 적성검사</span>
+        <span class="header-badge">관리자</span>
+      </div>
+      <div class="header-right">
+        <button class="btn-sm btn-sm-solid" onclick="openExcelModal()">
+          <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          엑셀 내보내기
+        </button>
+        <button class="btn-sm btn-sm-danger" onclick="clearAll()">
+          <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+          전체 삭제
+        </button>
+        <button class="btn-sm btn-sm-outline" onclick="doLogout()">로그아웃</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Stats Bar -->
+  <div class="stats-bar">
+    <div class="stats-bar-inner">
+      <div class="stat-item">
+        <span class="stat-num" id="stat-total">0</span>
+        <span class="stat-label">전체 응시자</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-num" id="stat-today">0</span>
+        <span class="stat-label">오늘 응시</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-num" id="stat-week">0</span>
+        <span class="stat-label">이번 주</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-num" id="stat-latest">—</span>
+        <span class="stat-label">최근 응시일</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <input type="text" class="search-input" id="search-input" placeholder="이름 또는 핸드폰번호로 검색..." oninput="renderCards()">
+    <select class="filter-select" id="sort-select" onchange="renderCards()">
+      <option value="newest">최신순</option>
+      <option value="oldest">오래된순</option>
+      <option value="name">이름순</option>
+    </select>
+  </div>
+
+  <!-- Cards -->
+  <div class="cards-wrap">
+    <div class="cards-grid" id="cards-grid"></div>
+  </div>
+
+</div>
+
+<!-- ══════════ EXCEL MODAL ══════════ -->
+<div class="modal-backdrop" id="excel-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">엑셀 복사</span>
+      <button class="modal-close" onclick="closeExcelModal()">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p class="modal-desc">
+        아래 데이터를 복사한 뒤 엑셀에서 <strong>Ctrl+V</strong> 로 붙여넣으세요.<br>
+        탭(Tab) 구분자로 셀이 자동 분리됩니다.
+      </p>
+      <select class="excel-select" id="excel-col-select" onchange="updateExcelPreview()">
+        <option value="summary">요약 (이름, 연락처, 성별, 생년월일, 학교, 전공, 날짜 + 항목별 평균)</option>
+        <option value="raw">원점수 (이름 + 55개 문항 점수)</option>
+        <option value="pct">백분율 (이름 + 13개 항목 %)</option>
+      </select>
+      <textarea class="excel-textarea" id="excel-textarea" readonly onclick="this.select()"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-sm btn-sm-outline" onclick="closeExcelModal()">닫기</button>
+      <button class="btn-sm btn-sm-solid" onclick="copyExcel()">
+        <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184"/></svg>
+        전체 복사
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── 비밀번호 설정 (여기서 변경) ──────────────────────────
+const ADMIN_PASSWORD = 'sbs2024';
+// ─────────────────────────────────────────────────────────
+
+// ── 항목 정의 ─────────────────────────────────────────────
+const BASIC_SECTIONS = ['조형력','상상력','손재주','창의력','컴퓨터 활용','기획력','감수성'];
+const MAJOR_SECTIONS = ['웹디자인','편집디자인','실내건축디자인','산업디자인','애니메이션','영상디자인'];
+const ALL_SECTIONS   = [...BASIC_SECTIONS, ...MAJOR_SECTIONS];
+
+const Q_SECTION_MAP = [
+  {name:'조형력',count:7},{name:'상상력',count:6},{name:'손재주',count:5},
+  {name:'창의력',count:4},{name:'컴퓨터 활용',count:3},{name:'기획력',count:3},{name:'감수성',count:3},
+  {name:'웹디자인',count:5},{name:'편집디자인',count:5},{name:'실내건축디자인',count:5},
+  {name:'산업디자인',count:3},{name:'애니메이션',count:3},{name:'영상디자인',count:3},
+];
+
+// ── 데이터 ────────────────────────────────────────────────
+function getResults() {
+  try { return JSON.parse(localStorage.getItem('catd_results') || '[]'); }
+  catch { return []; }
+}
+
+// ── 로그인 ────────────────────────────────────────────────
+function doLogin() {
+  const pw = document.getElementById('pw-input').value;
+  if (pw === ADMIN_PASSWORD) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    sessionStorage.setItem('mentor_auth', '1');
+    init();
+  } else {
+    document.getElementById('login-error').style.display = 'block';
+    document.getElementById('pw-input').value = '';
+    document.getElementById('pw-input').focus();
+  }
+}
+function doLogout() {
+  sessionStorage.removeItem('mentor_auth');
+  location.reload();
+}
+
+// ── Init ──────────────────────────────────────────────────
+function init() {
+  if (sessionStorage.getItem('mentor_auth') === '1') {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+  }
+  updateStats();
+  renderCards();
+}
+
+// ── Stats ─────────────────────────────────────────────────
+function updateStats() {
+  const data = getResults();
+  const today = new Date().toDateString();
+  const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+
+  document.getElementById('stat-total').textContent = data.length;
+  document.getElementById('stat-today').textContent = data.filter(r => new Date(r.submittedAt).toDateString() === today).length;
+  document.getElementById('stat-week').textContent  = data.filter(r => new Date(r.submittedAt) >= weekAgo).length;
+  if (data.length) {
+    const latest = data.reduce((a, b) => new Date(a.submittedAt) > new Date(b.submittedAt) ? a : b);
+    document.getElementById('stat-latest').textContent = new Date(latest.submittedAt).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' });
+  }
+}
+
+// ── Render Cards ──────────────────────────────────────────
+function renderCards() {
+  let data = getResults();
+  const q = document.getElementById('search-input').value.trim().toLowerCase();
+  const sort = document.getElementById('sort-select').value;
+
+  if (q) data = data.filter(r => r.name?.includes(q) || r.phone?.includes(q));
+  if (sort === 'newest') data.sort((a,b) => new Date(b.submittedAt) - new Date(a.submittedAt));
+  else if (sort === 'oldest') data.sort((a,b) => new Date(a.submittedAt) - new Date(b.submittedAt));
+  else data.sort((a,b) => (a.name || '').localeCompare(b.name || '', 'ko'));
+
+  const grid = document.getElementById('cards-grid');
+
+  if (!data.length) {
+    grid.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div>${q ? '검색 결과가 없습니다.' : '아직 제출된 결과가 없습니다.<br>적성검사 페이지에서 검사를 진행해 주세요.'}</div>`;
+    return;
+  }
+
+  // Re-index for display
+  const allData = getResults();
+  grid.innerHTML = data.map((r, i) => {
+    const origIdx = allData.findIndex(x => x.id === r.id);
+    return buildCard(r, origIdx + 1, i + 1);
+  }).join('');
+}
+
+function buildCard(r, num, displayNum) {
+  const scores = r.scores || {};
+  const date = new Date(r.submittedAt);
+  const dateStr = date.toLocaleDateString('ko-KR', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+  // Basic section chips
+  const basicChips = BASIC_SECTIONS.map(sec => {
+    const s = scores[sec];
+    const pct = s?.pct ?? 0;
+    const lvl = pct >= 80 ? 'level-high' : pct >= 50 ? 'level-mid' : 'level-low';
+    return `<div class="score-chip">
+      <span class="score-chip-label">${sec}</span>
+      <span class="score-chip-val ${lvl}">${s?.avg ?? '-'}</span>
+      <span class="score-chip-pct">${pct}%</span>
+    </div>`;
+  }).join('');
+
+  // Major section chips
+  const majorChips = MAJOR_SECTIONS.map(sec => {
+    const s = scores[sec];
+    const pct = s?.pct ?? 0;
+    const lvl = pct >= 80 ? 'level-high' : pct >= 60 ? 'level-mid' : 'level-low';
+    return `<div class="score-chip">
+      <span class="score-chip-label">${sec.replace('디자인','').replace('건축','건축')}</span>
+      <span class="score-chip-val ${lvl}">${s?.avg ?? '-'}</span>
+      <span class="score-chip-pct">${pct}%</span>
+    </div>`;
+  }).join('');
+
+  // Answers grid (55칸)
+  const answers = r.answers || [];
+  let ansLabels = '';
+  let ansCells = '';
+  for (let i = 0; i < 55; i += 11) {
+    const chunk = answers.slice(i, i + 11);
+    ansLabels += chunk.map((_, j) => `<span class="ans-label">${i+j+1}</span>`).join('');
+    ansCells  += chunk.map(v => `<div class="ans-cell v${v}">${v}</div>`).join('');
+  }
+  // Last row padding
+  const rem = 55 % 11;
+  // 55 / 11 = 5 rows exactly, no padding needed
+
+  return `<div class="result-card" id="card-${r.id}">
+    <div class="card-header">
+      <div class="card-header-left">
+        <div class="card-name">${r.name || '—'}</div>
+        <div class="card-meta">
+          <span class="card-meta-item">📱 ${r.phone || '—'}</span>
+          <span class="card-meta-item">· ${r.gender || '—'}</span>
+          ${r.birth  ? `<span class="card-meta-item">· ${r.birth}</span>` : ''}
+          ${r.school ? `<span class="card-meta-item">· ${r.school}</span>` : ''}
+          ${r.major  ? `<span class="card-meta-item">· ${r.major}</span>` : ''}
+        </div>
+      </div>
+      <span class="card-idx">${num}</span>
+    </div>
+
+    <div class="card-scores">
+      <div class="scores-group-title">기초소양 (Part A)</div>
+      <div class="scores-row">${basicChips}</div>
+      <div class="scores-group-title">전공소양 (Part B)</div>
+      <div class="scores-row">${majorChips}</div>
+    </div>
+
+    <div class="card-answers">
+      <button class="answers-toggle" onclick="toggleAnswers(this)">
+        <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>
+        선택 번호 보기
+      </button>
+      <div class="answers-panel">
+        <div class="ans-label-row">${Array.from({length:11},(_,j)=>`<span class="ans-label">${j+1}</span>`).join('')}</div>
+        ${[0,11,22,33,44].map(start => {
+          const chunk = answers.slice(start, start+11);
+          return '<div class="answers-grid">' + chunk.map(v => `<div class="ans-cell v${v}">${v}</div>`).join('') + '</div>';
+        }).join('')}
+      </div>
+    </div>
+
+    <div class="card-footer">
+      <span class="card-date">${dateStr}</span>
+      <div class="copy-row">
+        <button class="btn-sm btn-sm-outline" onclick="copyCard('${r.id}')">
+          <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184"/></svg>
+          이 카드 복사
+        </button>
+        <button class="btn-sm btn-sm-danger" onclick="deleteCard('${r.id}')">삭제</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── Toggle answers ─────────────────────────────────────────
+function toggleAnswers(btn) {
+  const panel = btn.nextElementSibling;
+  const open = panel.classList.toggle('open');
+  btn.querySelector('svg').style.transform = open ? 'rotate(180deg)' : '';
+  btn.childNodes[btn.childNodes.length-1].textContent = open ? ' 선택 번호 접기' : ' 선택 번호 보기';
+}
+
+// ── Copy single card (탭 구분) ─────────────────────────────
+function copyCard(id) {
+  const data = getResults();
+  const r = data.find(x => x.id == id);
+  if (!r) return;
+  const scores = r.scores || {};
+  const row = [
+    r.name, r.phone, r.gender, r.birth, r.school, r.major,
+    new Date(r.submittedAt).toLocaleString('ko-KR'),
+    ...ALL_SECTIONS.map(s => scores[s]?.avg ?? ''),
+    ...ALL_SECTIONS.map(s => (scores[s]?.pct ?? '') + (scores[s] ? '%' : '')),
+    ...(r.answers || [])
+  ].join('\t');
+  navigator.clipboard.writeText(row).then(() => showToast('클립보드에 복사되었습니다!'));
+}
+
+// ── Delete card ───────────────────────────────────────────
+function deleteCard(id) {
+  if (!confirm('이 결과를 삭제하시겠습니까?')) return;
+  const data = getResults().filter(x => x.id != id);
+  localStorage.setItem('catd_results', JSON.stringify(data));
+  updateStats(); renderCards();
+}
+
+// ── Clear all ─────────────────────────────────────────────
+function clearAll() {
+  if (!confirm(`전체 ${getResults().length}건의 결과를 모두 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.`)) return;
+  localStorage.removeItem('catd_results');
+  updateStats(); renderCards();
+  showToast('전체 삭제 완료');
+}
+
+// ── Excel Modal ───────────────────────────────────────────
+function openExcelModal() {
+  document.getElementById('excel-modal').classList.add('open');
+  updateExcelPreview();
+}
+function closeExcelModal() {
+  document.getElementById('excel-modal').classList.remove('open');
+}
+
+function updateExcelPreview() {
+  const mode = document.getElementById('excel-col-select').value;
+  const data = getResults().slice().sort((a,b) => new Date(a.submittedAt) - new Date(b.submittedAt));
+
+  let header = '';
+  let rows = [];
+
+  if (mode === 'summary') {
+    header = ['번호','이름','핸드폰','성별','생년월일','학교/직장','전공','검사일',
+      ...BASIC_SECTIONS.map(s => s+'(평균)'),
+      ...MAJOR_SECTIONS.map(s => s+'(평균)'),
+      ...BASIC_SECTIONS.map(s => s+'(%)'),
+      ...MAJOR_SECTIONS.map(s => s+'(%)'),
+    ].join('\t');
+    rows = data.map((r, i) => {
+      const sc = r.scores || {};
+      return [
+        i+1, r.name, r.phone, r.gender, r.birth, r.school, r.major,
+        new Date(r.submittedAt).toLocaleDateString('ko-KR'),
+        ...ALL_SECTIONS.map(s => sc[s]?.avg ?? ''),
+        ...ALL_SECTIONS.map(s => sc[s]?.pct ?? ''),
+      ].join('\t');
+    });
+  } else if (mode === 'raw') {
+    header = ['번호','이름', ...Array.from({length:55},(_,i)=>`Q${i+1}`)].join('\t');
+    rows = data.map((r, i) => [i+1, r.name, ...(r.answers || Array(55).fill(''))].join('\t'));
+  } else {
+    header = ['번호','이름', ...ALL_SECTIONS.map(s => s+'(%)')].join('\t');
+    rows = data.map((r, i) => {
+      const sc = r.scores || {};
+      return [i+1, r.name, ...ALL_SECTIONS.map(s => sc[s]?.pct ?? '')].join('\t');
+    });
+  }
+
+  document.getElementById('excel-textarea').value = [header, ...rows].join('\n');
+}
+
+function copyExcel() {
+  const ta = document.getElementById('excel-textarea');
+  ta.select();
+  navigator.clipboard.writeText(ta.value).then(() => showToast('전체 데이터가 복사되었습니다!'));
+}
+
+// ── Toast ─────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ── Auto-login if session active ──────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  if (sessionStorage.getItem('mentor_auth') === '1') {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    init();
+  }
+  document.getElementById('pw-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') doLogin();
+  });
+});
+</script>
+</body>
+</html>
