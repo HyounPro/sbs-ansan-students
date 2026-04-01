@@ -188,6 +188,37 @@
   .btn-restart:hover { border-color: var(--text-primary); color: var(--text-primary); }
 
   @media (max-width: 480px) { .info-form { grid-template-columns: 1fr; } .info-form .full { grid-column: 1; } }
+
+  /* ── Privacy Consent ── */
+  .privacy-notice { font-size: 12px; color: var(--text-muted); text-align: right; margin-bottom: 12px; }
+  .privacy-check-box {
+    border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px 16px;
+    display: flex; align-items: center; gap: 10px; margin-bottom: 8px; cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .privacy-check-box:hover { border-color: var(--border-hover); }
+  .privacy-check-box.agreed { border-color: var(--text-primary); }
+  .custom-radio {
+    width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid #999;
+    flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+  }
+  .custom-radio.checked { border-color: #111; background: #111; }
+  .custom-radio.checked::after { content: ''; width: 7px; height: 7px; border-radius: 50%; background: #fff; display: block; }
+  .privacy-check-label { font-size: 14px; font-weight: 400; color: var(--text-primary); }
+  .privacy-detail-link-wrap { text-align: right; margin-bottom: 16px; }
+  .privacy-detail-link { font-size: 13px; color: var(--text-muted); cursor: pointer; text-decoration: underline; text-underline-offset: 2px; background: none; border: none; font-family: 'Noto Sans KR', sans-serif; padding: 0; }
+  .privacy-detail-link:hover { color: var(--text-primary); }
+  .privacy-detail-panel {
+    display: none; margin-bottom: 16px;
+    border: 1px solid var(--border); border-radius: var(--radius-sm);
+    padding: 14px 16px; background: var(--surface);
+  }
+  .privacy-detail-panel.open { display: block; }
+  .privacy-detail-item { margin-bottom: 10px; }
+  .privacy-detail-item:last-child { margin-bottom: 0; }
+  .privacy-detail-key { font-size: 11px; color: var(--text-muted); margin-bottom: 2px; }
+  .privacy-detail-val { font-size: 12px; color: var(--text-secondary); line-height: 1.6; }
+  .privacy-error { font-size: 12px; color: #cc4444; margin-bottom: 10px; display: none; }
 </style>
 </head>
 <body>
@@ -243,6 +274,42 @@
         <input type="text" id="user-major" placeholder="전공 또는 관심 분야">
       </div>
     </div>
+    <p class="privacy-notice">※ 검사 결과 안내 외 절대 다른 용도로 사용되지 않습니다.</p>
+
+    <div class="privacy-check-box" id="privacy-check-box" onclick="togglePrivacy()">
+      <div class="custom-radio" id="privacy-radio"></div>
+      <span class="privacy-check-label">개인정보 수집·이용에 동의합니다. (필수)</span>
+    </div>
+
+    <div class="privacy-detail-link-wrap">
+      <span class="privacy-detail-link" id="privacy-detail-link" onclick="togglePrivacyDetail()">자세히보기</span>
+    </div>
+
+    <div class="privacy-detail-panel" id="privacy-detail-panel">
+      <div class="privacy-detail-item">
+        <div class="privacy-detail-key">수집 항목</div>
+        <div class="privacy-detail-val">이름, 연락처, 성별, 생년월일, 학교/직장, 전공, 수강안내 관련 이력</div>
+      </div>
+      <div class="privacy-detail-item">
+        <div class="privacy-detail-key">이용 목적</div>
+        <div class="privacy-detail-val">수강안내 제공, 전환 이력 관리 및 맞춤형 재안내를 통한 서비스 품질 개선</div>
+      </div>
+      <div class="privacy-detail-item">
+        <div class="privacy-detail-key">보유 기간</div>
+        <div class="privacy-detail-val">수집일로부터 최대 3년간 보관 후 파기</div>
+      </div>
+      <div class="privacy-detail-item">
+        <div class="privacy-detail-key">제공받는 자</div>
+        <div class="privacy-detail-val">SBS아카데미컴퓨터아트학원 안산지점</div>
+      </div>
+      <div class="privacy-detail-item">
+        <div class="privacy-detail-key">동의 거부 안내</div>
+        <div class="privacy-detail-val">동의를 거부하실 수 있으나, 이 경우 적성검사 참가가 불가능합니다.</div>
+      </div>
+    </div>
+
+    <p class="privacy-error" id="privacy-error">개인정보 수집·이용에 동의해 주세요.</p>
+
     <button class="btn-primary" onclick="startTest()">
       적성검사 시작하기
       <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
@@ -396,6 +463,23 @@ const QUESTIONS = {
   }
 };
 
+// ── Privacy Consent ───────────────────────────────────────
+let privacyAgreed = false;
+let privacyDetailOpen = false;
+
+function togglePrivacy() {
+  privacyAgreed = !privacyAgreed;
+  document.getElementById('privacy-radio').classList.toggle('checked', privacyAgreed);
+  document.getElementById('privacy-check-box').classList.toggle('agreed', privacyAgreed);
+  document.getElementById('privacy-error').style.display = 'none';
+}
+
+function togglePrivacyDetail() {
+  privacyDetailOpen = !privacyDetailOpen;
+  document.getElementById('privacy-detail-panel').classList.toggle('open', privacyDetailOpen);
+  document.getElementById('privacy-detail-link').textContent = privacyDetailOpen ? '자세히보기 ∧' : '자세히보기';
+}
+
 // ── State ──────────────────────────────────────────────────
 let currentPart = 'A';
 let answers = {};
@@ -480,6 +564,7 @@ function startTest() {
   const phone  = document.getElementById('user-phone').value.trim();
   const gender = document.getElementById('user-gender').value;
   if (!name || !phone || !gender) { alert('이름, 핸드폰번호, 성별을 입력해 주세요.'); return; }
+  if (!privacyAgreed) { document.getElementById('privacy-error').style.display = 'block'; return; }
   userInfo = {
     name, phone, gender,
     birth:  document.getElementById('user-birth').value.trim(),
@@ -579,6 +664,12 @@ async function saveToSupabase(record) {
 // ── Restart ────────────────────────────────────────────────
 function restartTest() {
   answers = {}; userInfo = {}; currentPart = 'A';
+  privacyAgreed = false; privacyDetailOpen = false;
+  document.getElementById('privacy-radio').classList.remove('checked');
+  document.getElementById('privacy-check-box').classList.remove('agreed');
+  document.getElementById('privacy-detail-panel').classList.remove('open');
+  document.getElementById('privacy-detail-link').textContent = '자세히보기';
+  document.getElementById('privacy-error').style.display = 'none';
   ['user-name','user-phone','user-birth','user-school','user-major'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('user-gender').value = '';
   showPage('page-title');
