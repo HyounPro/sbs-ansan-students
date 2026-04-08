@@ -195,7 +195,7 @@
       return weeks;
     }
     function marAllWeekdays() {
-      const list = [], cur = new Date(2026, 2, 16), end = new Date(2026, 3, 10);
+      const list = [], cur = new Date(2026, 2, 16), end = new Date(2026, 3, 8);
       while (cur <= end) { if (cur.getDay()>=1&&cur.getDay()<=5) list.push(new Date(cur)); cur.setDate(cur.getDate()+1); }
       return list;
     }
@@ -212,6 +212,7 @@
         if ([2,4].includes(d.getDay())) map.set(dateKey(d),'orange');
       });
       ['orange','blue','orange'].forEach((c,i)=>{ if(fris[i]) map.set(dateKey(fris[i]),c); });
+      map.delete('2026-04-09'); // 수업 없음
       return map;
     }
     function marP3() {
