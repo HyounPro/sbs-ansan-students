@@ -437,7 +437,7 @@
       const pats = currentMonth==='mar' ? MAR_PATTERNS : currentMonth==='may' ? MAY_PATTERNS : APR_PATTERNS;
       const pat = pats[currentTab];
       const classMap = pat.map();
-      const weeks = currentMonth==='mar' ? marGetWeeks() : aprGetWeeks();
+      const weeks = currentMonth==='mar' ? marGetWeeks() : currentMonth==='may' ? mayGetWeeks() : aprGetWeeks();
       document.getElementById('calTitle').textContent = pat.title;
       document.getElementById('calBody').innerHTML = weeks.map(week=>`
         <div class="cal-week">
