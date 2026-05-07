@@ -356,9 +356,12 @@
 
     function mayGetWeeks() {
       const weeks = [];
-      const start = new Date(2026, 4, 13);
+      const start = new Date(2026, 4, 13); // 5/13 수요일
       const end   = new Date(2026, 5, 12);
       let cur = new Date(start), week = [];
+      // 첫 주 시작 전 월/화 빈칸 채우기 (5/13은 수=getDay()3 → 앞에 월,화 null 2개)
+      const firstDow = start.getDay(); // 3(수)
+      for (let i = 1; i < firstDow; i++) week.push(null); // 월(1),화(2) → 2개 null
       while (cur <= end) {
         const dow = cur.getDay();
         if (dow >= 1 && dow <= 5) {
