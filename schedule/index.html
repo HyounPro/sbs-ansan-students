@@ -144,6 +144,7 @@
       <div class="section" style="padding-top:0;">
         <div class="month-tabs">
           <button class="month-tab active" onclick="setMonth('apr',this)">4월 격일시간표</button>
+          <button class="month-tab" onclick="setMonth('may',this)">5월 격일시간표</button>
         </div>
 
         <div class="tabs" id="tabBar"></div>
@@ -350,6 +351,63 @@
     ];
     const APR_TABS = ['① 월~목 (매일)','② 저녁 9일제 + 디지털드로잉','③ 오후 10일제','④ 백엔드마스터4','⑤ 웹1'];
 
+    // ────── 5월 ──────
+    const MAY_HOLIDAY = '2026-05-25';
+
+    function mayGetWeeks() {
+      const weeks = [];
+      const start = new Date(2026, 4, 13);
+      const end   = new Date(2026, 5, 12);
+      let cur = new Date(start), week = [];
+      while (cur <= end) {
+        const dow = cur.getDay();
+        if (dow >= 1 && dow <= 5) {
+          week.push(new Date(cur));
+          if (dow === 5) { weeks.push([...week]); week = []; }
+        }
+        cur.setDate(cur.getDate() + 1);
+      }
+      if (week.length) { while(week.length<5) week.push(null); weeks.push(week); }
+      return weeks;
+    }
+
+    function mayP1() { // 오후 10일제
+      const m = new Map();
+      ['2026-05-13','2026-05-15','2026-05-18','2026-05-20','2026-05-22',
+       '2026-05-27','2026-05-29','2026-06-01','2026-06-03','2026-06-05',
+       '2026-06-08','2026-06-10'].forEach(d=>m.set(d,'blue'));
+      ['2026-05-14','2026-05-19','2026-05-21','2026-05-26','2026-05-28',
+       '2026-06-02','2026-06-04','2026-06-09'].forEach(d=>m.set(d,'orange'));
+      return m;
+    }
+    function mayP2() { // 저녁 9일제 + 디지털드로잉
+      const m = new Map();
+      ['2026-05-13','2026-05-15','2026-05-18','2026-05-20','2026-05-22',
+       '2026-05-27','2026-05-29','2026-06-01','2026-06-03','2026-06-05',
+       '2026-06-08'].forEach(d=>m.set(d,'blue'));
+      ['2026-05-14','2026-05-19','2026-05-21','2026-05-26','2026-05-28',
+       '2026-06-02','2026-06-04'].forEach(d=>m.set(d,'orange'));
+      return m;
+    }
+    function mayP3() { // 월~목 매일
+      const m = new Map();
+      ['2026-05-13','2026-05-14','2026-05-18','2026-05-19','2026-05-20','2026-05-21',
+       '2026-05-26','2026-05-27','2026-05-28','2026-06-01','2026-06-02','2026-06-03',
+       '2026-06-04','2026-06-08','2026-06-09','2026-06-10'].forEach(d=>m.set(d,'blue'));
+      return m;
+    }
+
+    const MAY_PATTERNS = [
+      { title:'2026년 5월 13일 ~ 6월 10일 | 오후 10일제', map:mayP1,
+        desc:[{color:'blue',text:'월수금 — 수업일'},{color:'orange',text:'화목 — 수업일'}] },
+      { title:'2026년 5월 13일 ~ 6월 8일 | 저녁 9일제 + 디지털드로잉', map:mayP2,
+        desc:[{color:'blue',text:'월수금 — 수업일'},{color:'orange',text:'화목 — 수업일'}] },
+      { title:'2026년 5월 13일 ~ 6월 10일 | 월~목 (매일)', map:mayP3,
+        desc:[{color:'blue',text:'월·화·수·목 — 매일 수업'},{color:null,text:'금요일 — 수업 없음'}] },
+    ];
+    const MAY_TABS = ['① 오후 10일제','② 저녁 9일제 + 디지털드로잉','③ 월~목 (매일)'];
+
+
     // ────── 상태 ──────
     let currentMonth = 'apr', currentTab = 0;
 
@@ -366,17 +424,17 @@
       renderCalendar();
     }
     function renderTabs() {
-      const tabs = currentMonth==='mar' ? MAR_TABS : APR_TABS;
+      const tabs = currentMonth==='mar' ? MAR_TABS : currentMonth==='may' ? MAY_TABS : APR_TABS;
       document.getElementById('tabBar').innerHTML = tabs.map((t,i)=>
         `<button class="tab${i===0?' active':''}" onclick="setTab(${i},this)">${t}</button>`
       ).join('');
     }
     function updateHero() {
-      const labels = { mar:'2026년 3월 격일시간표 (3/16 ~ 4/17)', apr:'2026년 4월 격일시간표 (4/13 ~ 5/15)' };
+      const labels = { mar:'2026년 3월 격일시간표 (3/16 ~ 4/17)', apr:'2026년 4월 격일시간표 (4/13 ~ 5/15)', may:'2026년 5월 격일시간표 (5/13 ~ 6/10)' };
       document.getElementById('heroSub').textContent = labels[currentMonth];
     }
     function renderCalendar() {
-      const pats = currentMonth==='mar' ? MAR_PATTERNS : APR_PATTERNS;
+      const pats = currentMonth==='mar' ? MAR_PATTERNS : currentMonth==='may' ? MAY_PATTERNS : APR_PATTERNS;
       const pat = pats[currentTab];
       const classMap = pat.map();
       const weeks = currentMonth==='mar' ? marGetWeeks() : aprGetWeeks();
@@ -385,6 +443,8 @@
         <div class="cal-week">
           ${week.map(d=>{
             if (!d) return `<div class="cal-day empty"></div>`;
+            const isHoliday = currentMonth==='may' && dateKey(d)==='2026-05-25';
+            if (isHoliday) return `<div class="cal-day empty" style="background:rgba(255,100,100,0.1);border-color:rgba(255,100,100,0.2);"><span class="day-num" style="color:#e53935">${d.getDate()}</span><span style="font-size:9px;color:#e53935;margin-top:2px;">부처님오신날</span></div>`;
             const key = dateKey(d), holiday = HOLIDAYS[key], cls = classMap.get(key);
             if (holiday) return `<div class="cal-day holiday"><span class="day-num">${d.getDate()}</span><span class="holiday-label">${holiday}</span></div>`;
             const dayClass = cls ? `class-${cls}` : 'empty';
