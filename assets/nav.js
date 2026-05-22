@@ -4,6 +4,7 @@ const NAV_ITEMS = [
   { label: '수업준비물', path: '/materials/' },
   { label: '학습자료', path: '/learning/' },
   { label: '연간시험일정', path: '/exam/' },
+  { label: '따즈아', path: '/ddazua/' },
   { label: '제휴혜택', path: '/benefits/' },
 ];
 

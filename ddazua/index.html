@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SBS아카데미 안산 — 따즈아 학습</title>
+  <meta property="og:url" content="https://sbs-ansan-notice.co.kr/ddazua/" />
+  <meta property="og:title" content="SBS아카데미 안산 — 따즈아 학습" />
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://sbs-ansan-notice.co.kr/assets/og-image.png?v=2" />
+  <meta property="og:site_name" content="SBS아카데미 안산" />
+  <meta property="og:description" content="수강생 분들은 수업 전, 꼭 확인해주세요!" />
+  <link rel="stylesheet" href="/assets/style.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+  <style>
+    /* 탭 */
+    .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 28px; }
+    .tab {
+      padding: 8px 18px; border-radius: 20px; cursor: pointer;
+      font-family: 'Noto Sans KR', sans-serif; font-size: 13px; font-weight: 700;
+      border: 1px solid rgba(0,0,0,0.08);
+      background: rgba(255,255,255,0.6); backdrop-filter: blur(10px);
+      color: #999; transition: all 0.15s; white-space: nowrap;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .tab:hover { color: #1a1a2e; background: rgba(255,255,255,0.8); }
+    .tab.active {
+      background: rgba(255,255,255,0.95); color: #1a1a2e; font-weight: 900;
+      border-color: rgba(167,139,250,0.4);
+      box-shadow: 0 4px 16px rgba(139,92,246,0.15);
+    }
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    /* 따즈아 바로가기 버튼 */
+    .ddazua-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: rgba(255,255,255,0.7); backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,0.9); border-radius: 14px;
+      padding: 14px 24px; text-decoration: none; color: #1a1a2e;
+      font-size: 14px; font-weight: 700;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      transition: all 0.2s; margin-bottom: 28px;
+    }
+    .ddazua-btn:hover { background: rgba(255,255,255,0.9); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.1); }
+    .ddazua-btn .arrow { color: #a78bfa; }
+
+    /* 학과 카드 */
+    .dept-grid { display: flex; flex-direction: column; gap: 16px; }
+    .dept-card {
+      background: rgba(255,255,255,0.55);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.85);
+      border-radius: 20px; overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.9);
+      transition: all 0.2s;
+    }
+    .dept-card:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.08); }
+
+    .dept-header {
+      display: flex; align-items: center; gap: 12px;
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      background: rgba(255,255,255,0.4);
+    }
+    .dept-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; flex-shrink: 0;
+    }
+    .dept-title { font-size: 15px; font-weight: 700; color: #1a1a2e; }
+    .dept-sub { font-size: 12px; color: #aaa; margin-top: 2px; }
+
+    .dept-body { padding: 16px 20px; }
+    .stage-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; align-items: flex-start; }
+    .stage-label {
+      font-size: 11px; font-weight: 700; color: #aaa;
+      min-width: 56px; padding-top: 6px; flex-shrink: 0;
+    }
+    .courses { display: flex; flex-wrap: wrap; gap: 6px; }
+    .course-tag {
+      font-size: 12px; padding: 5px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(0,0,0,0.07);
+      color: #666;
+      background: rgba(255,255,255,0.7);
+      text-decoration: none; transition: all 0.15s;
+    }
+    .course-tag:hover { background: rgba(255,255,255,0.95); color: #1a1a2e; transform: translateY(-1px); }
+    .course-tag.highlight {
+      background: rgba(167,139,250,0.12); color: #6d28d9;
+      border-color: rgba(167,139,250,0.3);
+    }
+    .course-tag.highlight:hover { background: rgba(167,139,250,0.22); }
+
+    .divider { height: 1px; background: rgba(0,0,0,0.05); margin: 8px 0; }
+
+    .cert-row { display: flex; align-items: center; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+    .cert-label { font-size: 11px; color: #bbb; }
+    .cert-badge {
+      font-size: 11px; padding: 3px 10px;
+      background: rgba(110,231,183,0.15); color: #059669;
+      border-radius: 20px; border: 1px solid rgba(110,231,183,0.3);
+    }
+
+    /* 학과별 아이콘 색상 */
+    .d-motion  { background: #EEEDFE; color: #3C3489; }
+    .d-cg      { background: #E1F5EE; color: #085041; }
+    .d-art     { background: #FAEEDA; color: #633806; }
+    .d-edit    { background: #FBEAF0; color: #72243E; }
+    .d-interior{ background: #E6F1FB; color: #0C447C; }
+    .d-web     { background: #EAF3DE; color: #27500A; }
+    .d-prog    { background: #FAECE7; color: #712B13; }
+    .d-youtube { background: #F1EFE8; color: #444441; }
+    .d-office  { background: #FCEBEB; color: #791F1F; }
+  </style>
+</head>
+<body>
+  <div class="bg-orb bg-orb1"></div>
+  <div class="bg-orb bg-orb2"></div>
+  <div class="bg-orb bg-orb3"></div>
+  <div class="bg-orb bg-orb4"></div>
+
+  <div class="wrap">
+    <nav id="nav"></nav>
+    <div class="page-wrap">
+      <div class="hero">
+        <div class="hero-tag"><span class="tag-dot"></span>DDAZUA</div>
+        <h1>SBS아카데미<br/><span class="g">따즈아 학습</span></h1>
+        <p>학과별 추천 커리큘럼을 확인하세요!</p>
+      </div>
+
+      <div class="section" style="padding-top:0;">
+        <a href="https://www.ddazua.com" target="_blank" class="ddazua-btn">
+          🎓 따즈아 바로가기 <span class="arrow">→</span>
+        </a>
+
+        <div class="tabs">
+          <button class="tab active" onclick="setTab(0,this)">전체</button>
+          <button class="tab" onclick="setTab(1,this)">🎬 모션</button>
+          <button class="tab" onclick="setTab(2,this)">🧊 CG</button>
+          <button class="tab" onclick="setTab(3,this)">🎨 아트웍</button>
+          <button class="tab" onclick="setTab(4,this)">🖼 시각편집</button>
+          <button class="tab" onclick="setTab(5,this)">🏠 인테리어</button>
+          <button class="tab" onclick="setTab(6,this)">🌐 웹디자인</button>
+          <button class="tab" onclick="setTab(7,this)">💻 프로그래밍</button>
+          <button class="tab" onclick="setTab(8,this)">▶️ 유튜브</button>
+          <button class="tab" onclick="setTab(9,this)">📋 사무자격증</button>
+        </div>
+
+        <!-- 전체 패널 -->
+        <div class="panel active" id="p0">
+          <div class="dept-grid" id="allGrid"></div>
+        </div>
+        <!-- 개별 패널 -->
+        <div class="panel" id="p1"><div class="dept-grid" id="g1"></div></div>
+        <div class="panel" id="p2"><div class="dept-grid" id="g2"></div></div>
+        <div class="panel" id="p3"><div class="dept-grid" id="g3"></div></div>
+        <div class="panel" id="p4"><div class="dept-grid" id="g4"></div></div>
+        <div class="panel" id="p5"><div class="dept-grid" id="g5"></div></div>
+        <div class="panel" id="p6"><div class="dept-grid" id="g6"></div></div>
+        <div class="panel" id="p7"><div class="dept-grid" id="g7"></div></div>
+        <div class="panel" id="p8"><div class="dept-grid" id="g8"></div></div>
+        <div class="panel" id="p9"><div class="dept-grid" id="g9"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/assets/nav.js"></script>
+  <script>
+  const DEPTS = [
+    {
+      id:1, icon:'d-motion', iconClass:'ti ti-movie', title:'모션학과',
+      sub:'After Effects · Premiere Pro · DaVinci Resolve',
+      stages:[
+        {label:'① 기초', courses:[
+          {name:'영상편집 실무의 모든 것', url:'https://www.ddazua.com/local/course/detail.php?id=2117'},
+          {name:'Premiere Pro 입문', url:'https://www.ddazua.com/local/course/list.php?id=772'},
+        ]},
+        {label:'② 심화', courses:[
+          {name:'컬러그레이딩 : DaVinci Resolve', url:'https://www.ddazua.com/local/course/detail.php?id=2309', hl:true},
+          {name:'After Effects 모션그래픽', url:'https://www.ddazua.com/local/course/list.php?id=769'},
+        ]},
+        {label:'③ 자격증', courses:[
+          {name:'ACP After Effects (Adobe 공식)', url:'https://www.ddazua.com/local/course/detail.php?id=2308', hl:true},
+        ]},
+      ],
+      certs:['ACP After Effects'],
+    },
+    {
+      id:2, icon:'d-cg', iconClass:'ti ti-3d-cube-sphere', title:'CG학과',
+      sub:'Cinema 4D · Blender · ZBrush · MAYA',
+      stages:[
+        {label:'① 기초', courses:[
+          {name:'ZBrush 2023 기초', url:'https://www.ddazua.com/local/course/detail.php?id=2323'},
+          {name:'Blender 입문', url:'https://www.ddazua.com/local/course/list.php?id=782'},
+        ]},
+        {label:'② 심화', courses:[
+          {name:'C4D 캐릭터 아트웍', url:'https://www.ddazua.com/local/course/detail.php?id=2404', hl:true},
+          {name:'ZBrush 2023 활용', url:'https://www.ddazua.com/local/course/detail.php?id=2324'},
+          {name:'MAYA', url:'https://www.ddazua.com/local/course/list.php?id=775'},
+        ]},
+        {label:'③ 버튜버', courses:[
+          {name:'버츄얼 캐릭터 제작 클래스', url:'https://www.ddazua.com/local/course/detail.php?id=2407', hl:true},
+          {name:'버츄얼 캐릭터 : 일러스트편', url:'https://www.ddazua.com/local/course/detail.php?id=2295'},
+        ]},
+      ],
+      certs:['UCU Programmer (Unity)'],
+    },
+    {
+      id:3, icon:'d-art', iconClass:'ti ti-brush', title:'아트웍학과',
+      sub:'일러스트레이터 · 드로잉 · 게임원화',
+      stages:[
+        {label:'① 기초', courses:[
+          {name:'아이패드 드로잉 입문', url:'https://www.ddazua.com/local/course/list.php?id=900'},
+          {name:'일러스트레이터 기초', url:'https://www.ddazua.com/local/course/list.php?id=763'},
+        ]},
+        {label:'② 심화', courses:[
+          {name:'20년차 일러스트레이터 클래스', url:'https://www.ddazua.com/local/course/detail.php?id=2333', hl:true},
+          {name:'아이패드 드로잉 × 굿즈 수익화', url:'https://www.ddazua.com/local/course/detail.php?id=2409', hl:true},
+        ]},
+        {label:'③ 패키지', courses:[
+          {name:'그래픽 패키지 디자인의 모든 것', url:'https://www.ddazua.com/local/course/detail.php?id=2408'},
+        ]},
+      ],
+      certs:['GTQ 일러스트','ACP Illustrator'],
+    },
+    {
+      id:4, icon:'d-edit', iconClass:'ti ti-layout', title:'시각편집학과',
+      sub:'포토샵 · 일러스트레이터 · 인디자인 · GTQ',
+      stages:[
+        {label:'① 기초', courses:[
+          {name:'포토샵 2024 기초 Part.1', url:'https://www.ddazua.com/local/course/detail.php?id=2119'},
+          {name:'포토샵 2024 기초 Part.2', url:'https://www.ddazua.com/local/course/detail.php?id=2120'},
+        ]},
+        {label:'② 심화', courses:[
+          {name:'NEW 멘토시리즈 포토샵', url:'https://www.ddazua.com/local/course/detail.php?id=2410', hl:true},
+          {name:'NEW 멘토시리즈 일러스트레이터', url:'https://www.ddazua.com/local/course/detail.php?id=2381', hl:true},
+          {name:'포토샵+미드저니 활용 바이블', url:'https://www.ddazua.com/local/course/detail.php?id=2334'},
+        ]},
+        {label:'③ 자격증', courses:[
+          {name:'GTQ 포토샵', url:'https://www.ddazua.com/local/course/list.php?id=757'},
+          {name:'컴퓨터그래픽스운용기능사', url:'https://www.ddazua.com/local/course/list.php?id=765'},
+          {name:'ACP Indesign CC2023', url:'https://www.ddazua.com/local/course/detail.php?id=2175'},
+        ]},
+      ],
+      certs:['GTQ 1급','컴그기능사','ACP Photoshop'],
+    },
+    {
+      id:5, icon:'d-interior', iconClass:'ti ti-home-2', title:'인테리어학과',
+      sub:'AutoCAD · SketchUp · 3DsMAX · Revit · 전산응용건축제도기능사',
+      stages:[
+        {label:'① 기초', courses:[
+          {name:'AutoCAD 기초', url:'https://www.ddazua.com/local/course/list.php?id=781'},
+          {name:'Sweet Home 3D', url:'https://www.ddazua.com/local/course/list.php?id=788'},
+        ]},
+        {label:'② 심화', courses:[
+          {name:'스케치업 & 엔스케이프 건축 모델링', url:'https://www.ddazua.com/local/course/detail.php?id=2305', hl:true},
+          {name:'3DsMAX', url:'https://www.ddazua.com/local/course/list.php?id=778'},
+          {name:'Revit', url:'https://www.ddazua.com/local/course/list.php?id=785'},
+          {name:'Lumion', url:'https://www.ddazua.com/local/course/list.php?id=784'},
+        ]},
+        {label:'③ 자격증', courses:[
+          {name:'전산응용건축제도기능사 실기 NEW', url:'https://www.ddazua.com/local/course/detail.php?id=2387', hl:true},
+          {name:'건축제도기능사 실기 기초 1', url:'https://www.ddazua.com/local/course/detail.php?id=2142'},
+          {name:'건축제도기능사 실기 기초 2', url:'https://www.ddazua.com/local/course/detail.php?id=2143'},
+          {name:'실내건축 자격증', url:'https://www.ddazua.com/local/course/list.php?id=881'},
+        ]},
+      ],
+      certs:['전산응용건축제도기능사','실내건축기능사'],
+    },
+    {
+      id:6, icon:'d-web', iconClass:'ti ti-world', title:'웹디자인학과',
+      sub:'포토샵 · HTML/CSS · Adobe XD · 웹디자인기능사',
+      stages:[
+        {label:'① 기초', courses:[
+          {name:'포토샵 기초', url:'https://www.ddazua.com/local/course/detail.php?id=2119'},
+          {name:'HTML/CSS 기초', url:'https://www.ddazua.com/local/course/list.php?id=717'},
+          {name:'Adobe XD', url:'https://www.ddazua.com/local/course/list.php?id=711'},
+        ]},
+        {label:'② 심화', courses:[
+          {name:'멘토시리즈 일러스트레이터', url:'https://www.ddazua.com/local/course/detail.php?id=2381', hl:true},
+          {name:'포토샵+미드저니 활용', url:'https://www.ddazua.com/local/course/detail.php?id=2334'},
+        ]},
+        {label:'③ 자격증', courses:[
+          {name:'웹디자인기능사', url:'https://www.ddazua.com/local/course/list.php?id=747', hl:true},
+          {name:'GTQ 포토샵', url:'https://www.ddazua.com/local/course/list.php?id=757'},
+        ]},
+      ],
+      certs:['웹디자인기능사','GTQ 1급'],
+    },
+    {
+      id:7, icon:'d-prog', iconClass:'ti ti-code', title:'프로그래밍학과',
+      sub:'Python · Java · Unity · 정보처리기사',
+      stages:[
+        {label:'① 기초', courses:[
+          {name:'Python 기초', url:'https://www.ddazua.com/local/course/list.php?id=710'},
+          {name:'C언어 기초', url:'https://www.ddazua.com/local/course/list.php?id=706'},
+          {name:'Java 기초', url:'https://www.ddazua.com/local/course/list.php?id=719'},
+        ]},
+        {label:'② 심화', courses:[
+          {name:'파이썬 데이터분석 심화 : AI·머신러닝', url:'https://www.ddazua.com/local/course/detail.php?id=2258', hl:true},
+          {name:'Django', url:'https://www.ddazua.com/local/course/list.php?id=736'},
+          {name:'스프링부트', url:'https://www.ddazua.com/local/course/list.php?id=877'},
+        ]},
+        {label:'③ 자격증', courses:[
+          {name:'정보처리기사/산업기사', url:'https://www.ddazua.com/local/course/list.php?id=749', hl:true},
+          {name:'SQLD', url:'https://www.ddazua.com/local/course/list.php?id=742'},
+          {name:'COS', url:'https://www.ddazua.com/local/course/list.php?id=741'},
+          {name:'MCF AI-900 (Microsoft)', url:'https://www.ddazua.com/local/course/detail.php?id=2302'},
+        ]},
+      ],
+      certs:['정보처리기사','SQLD','MCF AI-900'],
+    },
+    {
+      id:8, icon:'d-youtube', iconClass:'ti ti-player-play', title:'유튜브학과',
+      sub:'Premiere Pro · After Effects · DaVinci · 썸네일 디자인',
+      stages:[
+        {label:'① 기초', courses:[
+          {name:'YouTube 채널 운영 기초', url:'https://www.ddazua.com/local/course/list.php?id=773'},
+          {name:'영상편집 실무의 모든 것', url:'https://www.ddazua.com/local/course/detail.php?id=2117'},
+        ]},
+        {label:'② 편집', courses:[
+          {name:'컬러그레이딩 : DaVinci Resolve', url:'https://www.ddazua.com/local/course/detail.php?id=2309', hl:true},
+          {name:'Premiere Pro 심화', url:'https://www.ddazua.com/local/course/list.php?id=772'},
+          {name:'After Effects 모션그래픽', url:'https://www.ddazua.com/local/course/list.php?id=769'},
+        ]},
+        {label:'③ 디자인', courses:[
+          {name:'포토샵 기초 (썸네일)', url:'https://www.ddazua.com/local/course/detail.php?id=2119'},
+          {name:'포토샵+미드저니 활용', url:'https://www.ddazua.com/local/course/detail.php?id=2334'},
+        ]},
+      ],
+      certs:['ACP Premiere Pro'],
+    },
+    {
+      id:9, icon:'d-office', iconClass:'ti ti-certificate', title:'사무자격증학과',
+      sub:'컴활 · ITQ · MOS · 워드프로세서 · 전산회계',
+      stages:[
+        {label:'① 입문', courses:[
+          {name:'워드프로세서 실기', url:'https://www.ddazua.com/local/course/detail.php?id=2122'},
+          {name:'워드프로세서 필기', url:'https://www.ddazua.com/local/course/detail.php?id=2123'},
+        ]},
+        {label:'② ITQ', courses:[
+          {name:'ITQ Excel 기본1', url:'https://www.ddazua.com/local/course/detail.php?id=2164', hl:true},
+          {name:'ITQ Excel 기본2', url:'https://www.ddazua.com/local/course/detail.php?id=2165'},
+          {name:'ITQ Excel 기출', url:'https://www.ddazua.com/local/course/detail.php?id=2166'},
+          {name:'ITQ PPT 기본', url:'https://www.ddazua.com/local/course/detail.php?id=2167'},
+          {name:'ITQ Word 기본', url:'https://www.ddazua.com/local/course/detail.php?id=2169'},
+        ]},
+        {label:'③ 컴활', courses:[
+          {name:'컴활 1급 필기 (멘토시리즈)', url:'https://www.ddazua.com/local/course/detail.php?id=2405', hl:true},
+          {name:'컴활 2급 필기', url:'https://www.ddazua.com/local/course/detail.php?id=2116'},
+          {name:'컴활 실기', url:'https://www.ddazua.com/local/course/list.php?id=461'},
+        ]},
+        {label:'④ 회계', courses:[
+          {name:'전산세무 2급 기출', url:'https://www.ddazua.com/local/course/detail.php?id=2139'},
+          {name:'전산세무 2급 실기', url:'https://www.ddazua.com/local/course/detail.php?id=2140'},
+          {name:'전산세무 2급 이론', url:'https://www.ddazua.com/local/course/detail.php?id=2141'},
+        ]},
+      ],
+      certs:['컴활 1급','ITQ OA Master','전산세무 2급'],
+    },
+  ];
+
+  function buildCard(dept) {
+    const stages = dept.stages.map(s => `
+      <div class="stage-row">
+        <span class="stage-label">${s.label}</span>
+        <div class="courses">
+          ${s.courses.map(c => `<a class="course-tag${c.hl?' highlight':''}" href="${c.url}" target="_blank">${c.name}</a>`).join('')}
+        </div>
+      </div>
+    `).join('');
+    const certs = dept.certs.map(c => `<span class="cert-badge">${c}</span>`).join('');
+    return `
+      <div class="dept-card">
+        <div class="dept-header">
+          <div class="dept-icon ${dept.icon}"><i class="${dept.iconClass}"></i></div>
+          <div>
+            <div class="dept-title">${dept.title}</div>
+            <div class="dept-sub">${dept.sub}</div>
+          </div>
+        </div>
+        <div class="dept-body">
+          ${stages}
+          <div class="cert-row">
+            <span class="cert-label">취득 목표 자격증</span>
+            ${certs}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // 렌더링
+  document.getElementById('allGrid').innerHTML = DEPTS.map(buildCard).join('');
+  DEPTS.forEach(d => {
+    document.getElementById('g'+d.id).innerHTML = buildCard(d);
+  });
+
+  function setTab(idx, btn) {
+    document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('p'+idx).classList.add('active');
+  }
+  </script>
+</body>
+</html>
