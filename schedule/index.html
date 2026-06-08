@@ -143,8 +143,7 @@
 
       <div class="section" style="padding-top:0;">
         <div class="month-tabs">
-          <button class="month-tab active" onclick="setMonth('apr',this)">4월 격일시간표</button>
-          <button class="month-tab" onclick="setMonth('may',this)">5월 격일시간표</button>
+          <button class="month-tab active" onclick="setMonth('may',this)">5월 격일시간표</button>
         </div>
 
         <div class="tabs" id="tabBar"></div>
@@ -470,7 +469,6 @@
       ).join('');
     }
     function updateHero() {
-      const labels = { mar:'2026년 3월 격일시간표 (3/16 ~ 4/17)', apr:'2026년 4월 격일시간표 (4/13 ~ 5/15)', may:'2026년 5월 격일시간표 (5/13 ~ 6/10)' };
       document.getElementById('heroSub').textContent = labels[currentMonth];
     }
     function renderCalendar() {
