@@ -374,7 +374,7 @@
       renderCalendar();
     }
     function renderTabs() {
-      const tabs = JUN_TABS;
+      const tabs = currentMonth==='jul' ? JUL_TABS : JUN_TABS;
       document.getElementById('tabBar').innerHTML = tabs.map((t,i)=>
         `<button class="tab${i===0?' active':''}" onclick="setTab(${i},this)">${t}</button>`
       ).join('');
@@ -383,10 +383,10 @@
       document.getElementById('heroSub').textContent = labels[currentMonth];
     }
     function renderCalendar() {
-      const pats = JUN_PATTERNS;
+      const pats = currentMonth==='jul' ? JUL_PATTERNS : JUN_PATTERNS;
       const pat = pats[currentTab];
       const classMap = pat.map();
-      const weeks = junGetWeeks();
+      const weeks = currentMonth==='jul' ? julGetWeeks() : junGetWeeks();
       document.getElementById('calTitle').textContent = pat.title;
       document.getElementById('calBody').innerHTML = weeks.map(week=>`
         <div class="cal-week">
