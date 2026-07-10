@@ -460,7 +460,7 @@
         <div class="cal-week">
           ${week.map(d=>{
             if (!d) return `<div class="cal-day empty"></div>`;
-            const isHoliday = (currentMonth==='jul' && dateKey(d)==='2026-07-17');
+            const isHoliday = (currentMonth==='jul' && currentTab===0 && dateKey(d)==='2026-07-17');
             if (isHoliday) {
               const hlabel = '제헌절';
               return `<div class="cal-day empty"><span class="day-num" style="color:#e53935">${d.getDate()}</span><span style="font-size:9px;color:#e53935;margin-top:2px;">${hlabel}</span></div>`;
