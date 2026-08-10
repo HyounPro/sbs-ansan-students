@@ -145,7 +145,6 @@
       <div class="section" style="padding-top:0;">
         <div class="month-tabs">
           <button class="month-tab active" onclick="setMonth('jul',this)">7월 격일시간표</button>
-          <button class="month-tab" onclick="setMonth('jun',this)">6월 격일시간표</button>
         </div>
 
         <div class="tabs" id="tabBar"></div>
@@ -180,182 +179,6 @@
 
 
 
-    // ────── 6월 ──────
-    function junGetWeeks() {
-      const weeks = [];
-      const start = new Date(2026, 5, 11); // 6/11 목요일
-      const end   = new Date(2026, 6, 10);
-      let cur = new Date(start), week = [];
-      // 6/11(목) 앞에 월,화,수 null 3개 패딩
-      const firstDow = start.getDay(); // 4(목)
-      for (let i = 1; i < firstDow; i++) week.push(null);
-      while (cur <= end) {
-        const dow = cur.getDay();
-        if (dow >= 1 && dow <= 5) {
-          week.push(new Date(cur));
-          if (dow === 5) { weeks.push([...week]); week = []; }
-        }
-        cur.setDate(cur.getDate() + 1);
-      }
-      if (week.length) { while(week.length<5) week.push(null); weeks.push(week); }
-      return weeks;
-    }
-
-    function junP1() { // 오후 10일제
-      const m = new Map();
-      ['2026-06-12','2026-06-15','2026-06-17',
-       '2026-06-22','2026-06-24','2026-06-26',
-       '2026-06-29','2026-07-01','2026-07-06','2026-07-08'].forEach(d=>m.set(d,'blue'));
-      ['2026-06-11','2026-06-16','2026-06-18','2026-06-19',
-       '2026-06-23','2026-06-25',
-       '2026-06-30','2026-07-02','2026-07-03',
-       '2026-07-07'].forEach(d=>m.set(d,'orange'));
-      return m;
-    }
-    function junP2() { // 저녁 9일제
-      const m = new Map();
-      ['2026-06-12','2026-06-15','2026-06-17',
-       '2026-06-22','2026-06-24','2026-06-26',
-       '2026-06-29','2026-07-01','2026-07-06'].forEach(d=>m.set(d,'blue'));
-      ['2026-06-11','2026-06-16','2026-06-18','2026-06-19',
-       '2026-06-23','2026-06-25',
-       '2026-06-30','2026-07-02','2026-07-03'].forEach(d=>m.set(d,'orange'));
-      return m;
-    }
-    function junP3() { // 월~목 매일
-      const m = new Map();
-      ['2026-06-11','2026-06-15','2026-06-16','2026-06-17','2026-06-18',
-       '2026-06-22','2026-06-23','2026-06-24','2026-06-25',
-       '2026-06-29','2026-06-30','2026-07-01','2026-07-02',
-       '2026-07-06','2026-07-07','2026-07-08'].forEach(d=>m.set(d,'blue'));
-      return m;
-    }
-    function junP4() { // 웹3 (월수금)
-      const m = new Map();
-      ['2026-06-17',
-       '2026-06-22','2026-06-24','2026-06-26',
-       '2026-06-29','2026-07-01',
-       '2026-07-06','2026-07-08','2026-07-10'].forEach(d=>m.set(d,'blue'));
-      return m;
-    }
-    function junP5() { // 백엔드마스터6 (화목금)
-      const m = new Map();
-      ['2026-06-11',
-       '2026-06-16','2026-06-18','2026-06-19',
-       '2026-06-23','2026-06-25',
-       '2026-06-30','2026-07-02','2026-07-03'].forEach(d=>m.set(d,'orange'));
-      return m;
-    }
-
-    const JUN_PATTERNS = [
-      { title:'2026년 6월 11일 ~ 7월 8일 | 오후 10일제', map:junP1,
-        lm:{blue:'월수금', orange:'화목금'},
-        desc:[{color:'blue',text:'월수금 — 수업일'},{color:'orange',text:'화목금 — 수업일'}] },
-      { title:'2026년 6월 11일 ~ 7월 6일 | 저녁 9일제 + 디지털드로잉', map:junP2,
-        lm:{blue:'월수금', orange:'화목금'},
-        desc:[{color:'blue',text:'월수금 — 수업일'},{color:'orange',text:'화목금 — 수업일'}] },
-      { title:'2026년 6월 11일 ~ 7월 8일 | 월~목 (매일)', map:junP3,
-        lm:{blue:'월~목', orange:''},
-        desc:[{color:'blue',text:'월·화·수·목 — 매일 수업'},{color:null,text:'금요일 — 수업 없음'}] },
-      { title:'2026년 6월 17일 ~ 7월 10일 | 웹3', map:junP4,
-        lm:{blue:'월수금', orange:''},
-        desc:[{color:'blue',text:'월수금 — 수업일'}] },
-      { title:'2026년 6월 11일 ~ 7월 3일 | 백엔드마스터6', map:junP5,
-        lm:{blue:'', orange:'화목금'},
-        desc:[{color:'orange',text:'화목금 — 수업일'}] },
-    ];
-
-    // ────── 7월 ──────
-    const JUL_HOLIDAY = '2026-07-17'; // 제헌절
-
-    function julGetWeeks() {
-      const weeks = [];
-      const start = new Date(2026, 6, 14); // 7/14 화요일
-      const end   = new Date(2026, 7, 20);
-      let cur = new Date(start), week = [];
-      // 7/14(화) 앞에 월 null 1개 패딩
-      week.push(null);
-      while (cur <= end) {
-        const dow = cur.getDay();
-        if (dow >= 1 && dow <= 5) {
-          week.push(new Date(cur));
-          if (dow === 5) { weeks.push([...week]); week = []; }
-        }
-        cur.setDate(cur.getDate() + 1);
-      }
-      if (week.length) { while(week.length<5) week.push(null); weeks.push(week); }
-      return weeks;
-    }
-
-    function julP1() { // 저녁 9일제
-      const m = new Map();
-      ['2026-07-15','2026-07-20','2026-07-22',
-       '2026-07-27','2026-07-29','2026-07-31',
-       '2026-08-03','2026-08-05','2026-08-07'].forEach(d=>m.set(d,'blue'));
-      ['2026-07-14','2026-07-16',
-       '2026-07-21','2026-07-23','2026-07-24',
-       '2026-07-28','2026-07-30',
-       '2026-08-04','2026-08-06'].forEach(d=>m.set(d,'orange'));
-      return m;
-    }
-    function julP2() { // 오후 10일제
-      const m = new Map();
-      ['2026-07-15','2026-07-17',
-       '2026-07-20','2026-07-22','2026-07-24',
-       '2026-07-27','2026-07-29','2026-07-31',
-       '2026-08-03','2026-08-05','2026-08-07'].forEach(d=>m.set(d,'blue'));
-      ['2026-07-14','2026-07-16',
-       '2026-07-21','2026-07-23',
-       '2026-07-28','2026-07-30',
-       '2026-08-04','2026-08-06'].forEach(d=>m.set(d,'orange'));
-      return m;
-    }
-    function julP3() { // 오전 16일제 월~목
-      const m = new Map();
-      ['2026-07-14','2026-07-15','2026-07-16',
-       '2026-07-20','2026-07-21','2026-07-22','2026-07-23',
-       '2026-07-27','2026-07-28','2026-07-29','2026-07-30',
-       '2026-08-03','2026-08-04','2026-08-05','2026-08-06',
-       '2026-08-10'].forEach(d=>m.set(d,'blue'));
-      return m;
-    }
-    function julP4() { // 웹4 월수금 (7/17~8/7)
-      const m = new Map();
-      ['2026-07-17',
-       '2026-07-20','2026-07-22',
-       '2026-07-27','2026-07-29','2026-07-31',
-       '2026-08-03','2026-08-05','2026-08-07'].forEach(d=>m.set(d,'blue'));
-      return m;
-    }
-    function julP5() { // AI에이전트2 화/목 (7/28~8/20)
-      const m = new Map();
-      ['2026-07-28','2026-07-30',
-       '2026-08-04','2026-08-06',
-       '2026-08-11','2026-08-13',
-       '2026-08-18','2026-08-20'].forEach(d=>m.set(d,'orange'));
-      return m;
-    }
-
-    const JUL_PATTERNS = [
-      { title:'2026년 7월 14일 ~ 8월 10일 | 저녁 9일제 + 디지털드로잉', map:julP1,
-        lm:{blue:'월수금', orange:'화목금'},
-        desc:[{color:'blue',text:'월수금 — 수업일'},{color:'orange',text:'화목금 — 수업일'}] },
-      { title:'2026년 7월 14일 ~ 8월 10일 | 오후 10일제', map:julP2,
-        lm:{blue:'월수금', orange:'화목금'},
-        desc:[{color:'blue',text:'월수금 — 수업일'},{color:'orange',text:'화목금 — 수업일'}] },
-      { title:'2026년 7월 14일 ~ 8월 10일 | 오전 16일제', map:julP3,
-        lm:{blue:'월~목', orange:''},
-        desc:[{color:'blue',text:'월·화·수·목 — 매일 수업'},{color:null,text:'금요일 — 수업 없음'}] },
-      { title:'2026년 7월 20일 ~ 8월 10일 | 웹4', map:julP4,
-        lm:{blue:'월수금', orange:''},
-        desc:[{color:'blue',text:'월수금 — 수업일'}] },
-      { title:'2026년 7월 28일 ~ 8월 20일 | AI에이전트2', map:julP5,
-        lm:{blue:'', orange:'화/목'},
-        desc:[{color:'orange',text:'화/목 — 수업일'}] },
-    ];
-    const JUL_TABS = ['① 저녁 9일제 + 디지털드로잉','② 오후 10일제','③ 오전 16일제','④ 웹4','⑤ AI에이전트2'];
-
-    const JUN_TABS = ['① 오후 10일제','② 저녁 9일제 + 디지털드로잉','③ 월~목 (매일)','④ 웹3','⑤ 백엔드마스터6'];
 
     // ────── 7월 ──────
     function julGetWeeks() {
@@ -442,7 +265,7 @@
       renderCalendar();
     }
     function renderTabs() {
-      const tabs = currentMonth==='jul' ? JUL_TABS : JUN_TABS;
+      const tabs = JUL_TABS;
       document.getElementById('tabBar').innerHTML = tabs.map((t,i)=>
         `<button class="tab${i===0?' active':''}" onclick="setTab(${i},this)">${t}</button>`
       ).join('');
@@ -451,10 +274,10 @@
       document.getElementById('heroSub').textContent = labels[currentMonth];
     }
     function renderCalendar() {
-      const pats = currentMonth==='jul' ? JUL_PATTERNS : JUN_PATTERNS;
+      const pats = JUL_PATTERNS;
       const pat = pats[currentTab];
       const classMap = pat.map();
-      const weeks = currentMonth==='jul' ? julGetWeeks() : junGetWeeks();
+      const weeks = julGetWeeks();
       document.getElementById('calTitle').textContent = pat.title;
       document.getElementById('calBody').innerHTML = weeks.map(week=>`
         <div class="cal-week">
