@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SBS아카데미 안산 — 격일시간표</title>
-  <!-- v20260608 -->
+  <!-- v20260811 -->
   <meta property="og:url" content="https://sbs-ansan-notice.co.kr/schedule/" />
   <meta property="og:title" content="SBS아카데미 안산 — 격일시간표" />
   <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
@@ -16,45 +16,33 @@
   <meta name="twitter:image" content="https://sbs-ansan-notice.co.kr/assets/og-image.png?v=2" />
   <link rel="stylesheet" href="/assets/style.css" />
   <style>
-    .month-tabs {
-      display: flex; gap: 8px; flex-wrap: wrap;
-      margin-bottom: 16px;
-    }
+    .month-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
     .month-tab {
       padding: 7px 20px; border-radius: 20px; cursor: pointer;
       font-family: 'Noto Sans KR', sans-serif; font-size: 13px; font-weight: 700;
       border: 1px solid rgba(0,0,0,0.08);
-      background: rgba(255,255,255,0.5);
-      backdrop-filter: blur(10px);
-      color: #bbb;
-      transition: all 0.15s;
+      background: rgba(255,255,255,0.5); backdrop-filter: blur(10px);
+      color: #bbb; transition: all 0.15s;
       box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     }
     .month-tab:hover { color: #1a1a2e; background: rgba(255,255,255,0.75); }
     .month-tab.active {
-      background: rgba(255,255,255,0.95);
-      color: #7c3aed; font-weight: 900;
+      background: rgba(255,255,255,0.95); color: #7c3aed; font-weight: 900;
       border-color: rgba(167,139,250,0.5);
       box-shadow: 0 4px 16px rgba(139,92,246,0.18);
     }
-    .tabs {
-      display: flex; gap: 8px; flex-wrap: wrap;
-      margin-bottom: 24px;
-    }
+    .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
     .tab {
       padding: 8px 18px; border-radius: 20px; cursor: pointer;
       font-family: 'Noto Sans KR', sans-serif; font-size: 13px; font-weight: 700;
       border: 1px solid rgba(0,0,0,0.08);
-      background: rgba(255,255,255,0.6);
-      backdrop-filter: blur(10px);
-      color: #999;
-      transition: all 0.15s; white-space: nowrap;
+      background: rgba(255,255,255,0.6); backdrop-filter: blur(10px);
+      color: #999; transition: all 0.15s; white-space: nowrap;
       box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     }
     .tab:hover { color: #1a1a2e; background: rgba(255,255,255,0.8); }
     .tab.active {
-      background: rgba(255,255,255,0.95);
-      color: #1a1a2e; font-weight: 900;
+      background: rgba(255,255,255,0.95); color: #1a1a2e; font-weight: 900;
       border-color: rgba(167,139,250,0.4);
       box-shadow: 0 4px 16px rgba(139,92,246,0.15);
     }
@@ -86,8 +74,7 @@
     .cal-body { padding: 10px; display: flex; flex-direction: column; gap: 6px; }
     .cal-week { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
     .cal-day {
-      border-radius: 12px; padding: 10px 8px;
-      min-height: 76px;
+      border-radius: 12px; padding: 10px 8px; min-height: 76px;
       display: flex; flex-direction: column; align-items: center; gap: 6px;
       border: 1.5px solid transparent;
     }
@@ -144,7 +131,8 @@
 
       <div class="section" style="padding-top:0;">
         <div class="month-tabs">
-          <button class="month-tab active" onclick="setMonth('jul',this)">7월 격일시간표</button>
+          <button class="month-tab active" onclick="setMonth('aug',this)">8월 격일시간표</button>
+          <button class="month-tab" onclick="setMonth('jul',this)">7월 격일시간표</button>
         </div>
 
         <div class="tabs" id="tabBar"></div>
@@ -173,21 +161,81 @@
     }
 
     const HOLIDAYS = {
-      '2026-05-01': '근로자의 날',
-      '2026-05-05': '어린이날',
+      '2026-08-17': '광복절 대체휴일',
     };
 
+    // ────── 8월 ──────
+    function augGetWeeks() {
+      const weeks = [];
+      const start = new Date(2026, 7, 10);
+      const end   = new Date(2026, 8, 9);
+      let cur = new Date(start), week = [];
+      while (cur <= end) {
+        const dow = cur.getDay();
+        if (dow >= 1 && dow <= 5) {
+          week.push(new Date(cur));
+          if (dow === 5) { weeks.push([...week]); week = []; }
+        }
+        cur.setDate(cur.getDate() + 1);
+      }
+      if (week.length) { while(week.length<5) week.push(null); weeks.push(week); }
+      return weeks;
+    }
 
+    function augP1() { // 오전 16일제 (월~목)
+      const m = new Map();
+      ['2026-08-12','2026-08-13',
+       '2026-08-18','2026-08-19','2026-08-20',
+       '2026-08-24','2026-08-25','2026-08-26','2026-08-27',
+       '2026-08-31','2026-09-01','2026-09-02','2026-09-03',
+       '2026-09-07','2026-09-08','2026-09-09'].forEach(d=>m.set(d,'blue'));
+      return m;
+    }
+    function augP2() { // 저녁 9일제 + 디지털드로잉
+      const m = new Map();
+      ['2026-08-12','2026-08-19','2026-08-21',
+       '2026-08-24','2026-08-26',
+       '2026-08-31','2026-09-02','2026-09-04',
+       '2026-09-07'].forEach(d=>m.set(d,'blue'));
+      ['2026-08-13','2026-08-14',
+       '2026-08-18','2026-08-20',
+       '2026-08-25','2026-08-27','2026-08-28',
+       '2026-09-01','2026-09-03'].forEach(d=>m.set(d,'orange'));
+      return m;
+    }
+    function augP3() { // 오후 10일제
+      const m = new Map();
+      ['2026-08-12','2026-08-19','2026-08-21',
+       '2026-08-24','2026-08-26',
+       '2026-08-31','2026-09-02','2026-09-04',
+       '2026-09-07','2026-09-09'].forEach(d=>m.set(d,'blue'));
+      ['2026-08-13','2026-08-14',
+       '2026-08-18','2026-08-20',
+       '2026-08-25','2026-08-27','2026-08-28',
+       '2026-09-01','2026-09-03','2026-09-08'].forEach(d=>m.set(d,'orange'));
+      return m;
+    }
 
+    const AUG_PATTERNS = [
+      { title:'2026년 8월 12일 ~ 9월 09일 | 오전 16일제', map:augP1,
+        lm:{blue:'월~목', orange:''},
+        desc:[{color:'blue',text:'월·화·수·목 — 매일 수업'},{color:null,text:'금요일 — 수업 없음'}] },
+      { title:'2026년 8월 12일 ~ 9월 07일 | 저녁 9일제 + 디지털드로잉', map:augP2,
+        lm:{blue:'월수금', orange:'화목금'},
+        desc:[{color:'blue',text:'월수금 — 수업일'},{color:'orange',text:'화목금 — 수업일'}] },
+      { title:'2026년 8월 12일 ~ 9월 09일 | 오후 10일제', map:augP3,
+        lm:{blue:'월수금', orange:'화목금'},
+        desc:[{color:'blue',text:'월수금 — 수업일'},{color:'orange',text:'화목금 — 수업일'}] },
+    ];
+    const AUG_TABS = ['① 오전 16일제','② 저녁 9일제 + 디지털드로잉','③ 오후 10일제'];
 
     // ────── 7월 ──────
     function julGetWeeks() {
       const weeks = [];
-      const start = new Date(2026, 6, 14); // 7/14 화요일
+      const start = new Date(2026, 6, 14);
       const end   = new Date(2026, 7, 20);
       let cur = new Date(start), week = [];
-      // 7/14(화) 앞에 월 null 1개 패딩
-      week.push(null);
+      week.push(null); // 7/14(화) 앞에 월 null 패딩
       while (cur <= end) {
         const dow = cur.getDay();
         if (dow >= 1 && dow <= 5) {
@@ -249,7 +297,6 @@
       return m;
     }
 
-
     const JUL_PATTERNS = [
       { title:'2026년 7월 14일 ~ 8월 10일 | 저녁 9일제 + 디지털드로잉', map:julP1,
         lm:{blue:'월수금', orange:'화목'},
@@ -268,10 +315,17 @@
         desc:[{color:'orange',text:'화·목 — 수업일'}] },
     ];
     const JUL_TABS = ['① 저녁 9일제 + 디지털드로잉','② 오후 10일제','③ 오전 16일제','④ 웹4','⑤ AI에이전트2'];
-    const labels = { jul:'2026년 7월 격일시간표 (7/14 ~ 8/20)' };
+
+    const labels = {
+      aug:'2026년 8월 격일시간표 (8/12 ~ 9/9)',
+      jul:'2026년 7월 격일시간표 (7/14 ~ 8/20)',
+    };
+    const TABS_MAP     = { aug: AUG_TABS,     jul: JUL_TABS };
+    const PATTERNS_MAP = { aug: AUG_PATTERNS, jul: JUL_PATTERNS };
+    const GETWEEKS_MAP = { aug: augGetWeeks,  jul: julGetWeeks };
 
     // ────── 상태 ──────
-    let currentMonth = 'jul', currentTab = 0;
+    let currentMonth = 'aug', currentTab = 0;
 
     function setMonth(m, btn) {
       currentMonth = m; currentTab = 0;
@@ -286,7 +340,7 @@
       renderCalendar();
     }
     function renderTabs() {
-      const tabs = JUL_TABS;
+      const tabs = TABS_MAP[currentMonth];
       document.getElementById('tabBar').innerHTML = tabs.map((t,i)=>
         `<button class="tab${i===0?' active':''}" onclick="setTab(${i},this)">${t}</button>`
       ).join('');
@@ -295,20 +349,17 @@
       document.getElementById('heroSub').textContent = labels[currentMonth];
     }
     function renderCalendar() {
-      const pats = JUL_PATTERNS;
-      const pat = pats[currentTab];
+      const pats = PATTERNS_MAP[currentMonth];
+      const pat  = pats[currentTab];
       const classMap = pat.map();
-      const weeks = julGetWeeks();
+      const weeks = GETWEEKS_MAP[currentMonth]();
       document.getElementById('calTitle').textContent = pat.title;
       document.getElementById('calBody').innerHTML = weeks.map(week=>`
         <div class="cal-week">
           ${week.map(d=>{
             if (!d) return `<div class="cal-day empty"></div>`;
             const isHoliday = (currentMonth==='jul' && currentTab===0 && dateKey(d)==='2026-07-17');
-            if (isHoliday) {
-              const hlabel = '제헌절';
-              return `<div class="cal-day empty"><span class="day-num" style="color:#e53935">${d.getDate()}</span><span style="font-size:9px;color:#e53935;margin-top:2px;">${hlabel}</span></div>`;
-            }
+            if (isHoliday) return `<div class="cal-day empty"><span class="day-num" style="color:#e53935">${d.getDate()}</span><span style="font-size:9px;color:#e53935;margin-top:2px;">제헌절</span></div>`;
             const key = dateKey(d), holiday = HOLIDAYS[key], cls = classMap.get(key);
             if (holiday) return `<div class="cal-day holiday"><span class="day-num">${d.getDate()}</span><span class="holiday-label">${holiday}</span></div>`;
             const dayClass = cls ? `class-${cls}` : 'empty';
@@ -331,4 +382,3 @@
   </script>
 </body>
 </html>
-
